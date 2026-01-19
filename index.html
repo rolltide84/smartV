@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartV - Math Learning App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        
+        /* Gradients */
+        .bg-sky { background: linear-gradient(to bottom, #7dd3fc, #bae6fd, #86efac); min-height: 100vh; }
+        .bg-indigo { background: linear-gradient(to bottom, #818cf8, #a78bfa, #f9a8d4); min-height: 100vh; }
+        .bg-yellow { background: linear-gradient(to bottom, #fde047, #fdba74, #fca5a5); min-height: 100vh; }
+        .bg-purple { background: linear-gradient(to bottom, #d8b4fe, #f9a8d4, #fca5a5); min-height: 100vh; }
+        .bg-gradient-blue { background: linear-gradient(to right, #3b82f6, #9333ea); }
+        .bg-gradient-green { background: linear-gradient(to right, #10b981, #3b82f6); }
+        
+        /* Utilities */
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+        .card { background: white; border-radius: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 1.5rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-1 { gap: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        
+        /* Text */
+        .text-center { text-align: center; }
+        .text-white { color: white; }
+        .text-gray { color: #4b5563; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-5xl { font-size: 3rem; }
+        .text-6xl { font-size: 3.75rem; }
+        .font-bold { font-weight: 700; }
+        
+        /* Spacing */
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        
+        /* Profile Picture */
+        .profile-pic { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; border: 4px solid #a855f7; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Animations */
+        @keyframes float { 
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes shimmer {
+            0% { box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.6), 0 0 30px rgba(59, 130, 246, 0.4); }
+            100% { box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); }
+        }
+        .profile-animate { animation: float 3s ease-in-out infinite, shimmer 2s ease-in-out infinite; }
+        
+        /* Buttons */
+        .btn { border: none; cursor: pointer; font-weight: 700; border-radius: 1rem; transition: all 0.2s; font-size: 1.125rem; }
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-purple { background: #a855f7; color: white; }
+        .btn-blue { background: linear-gradient(to right, #3b82f6, #a855f7); color: white; }
+        .btn-green { background: linear-gradient(to right, #10b981, #3b82f6); color: white; }
+        .btn-red { background: #ef4444; color: white; }
+        .btn-gray { background: #6b7280; color: white; }
+        .btn-activity { width: 100%; margin-top: 1rem; }
+        
+        /* Activity Cards */
+        .activity-card { background: white; border-radius: 1.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .activity-card:hover { transform: scale(1.05); box-shadow: 0 20px 25px rgba(0,0,0,0.15); }
+        .activity-icon { width: 80px; height: 80px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .bg-blue { background: #3b82f6; }
+        .bg-purple-bg { background: #a855f7; }
+        .bg-green { background: #10b981; }
+        .bg-orange { background: #f97316; }
+        .bg-teal { background: #14b8a6; }
+        .bg-pink { background: #ec4899; }
+        
+        /* Progress Bars */
+        .progress-bar { width: 100%; height: 1rem; background: #e5e7eb; border-radius: 9999px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(to right, #a855f7, #ec4899); transition: width 0.5s; border-radius: 9999px; }
+        .progress-skill { background: linear-gradient(to right, #10b981, #3b82f6); }
+        
+        /* Input */
+        .math-input { width: 100%; font-size: 3.75rem; text-align: center; font-weight: 700; border: 4px solid #d8b4fe; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; outline: none; }
+        .math-input:focus { border-color: #a855f7; }
+        
+        /* Badges */
+        .badge { padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+        .badge-yellow { background: #fef3c7; }
+        .badge-blue { background: #dbeafe; }
+        .badge-green { background: #d1fae5; }
+        .badge-purple { background: #e9d5ff; }
+        
+        /* Stats Cards */
+        .stat-card { border-radius: 1rem; padding: 1.5rem; text-align: center; }
+        .stat-card .icon { font-size: 3rem; margin-bottom: 0.75rem; }
+        .stat-card .value { font-size: 2.25rem; font-weight: 700; color: #1f2937; }
+        .stat-card .label { color: #6b7280; font-weight: 600; }
+        
+        /* Explanation Box */
+        .explanation { background: #dbeafe; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem; }
+        .explanation h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+        .explanation p { font-size: 1.125rem; margin-bottom: 0.75rem; color: #374151; }
+        .answer-box { background: #10b981; color: white; padding: 1.5rem; border-radius: 1rem; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .text-5xl { font-size: 2rem; }
+            .text-6xl { font-size: 2.5rem; }
+            .math-input { font-size: 2.5rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // App State
+        let state = {
+            screen: 'home',
+            playerData: {
+                name: 'SmartV Student',
+                level: 1,
+                xp: 0,
+                stars: 0,
+                skills: {
+                    addition: { mastery: 0 },
+                    subtraction: { mastery: 0 },
+                    patterns: { mastery: 0 },
+                    placeValue: { mastery: 0 },
+                    skipCount: { mastery: 0 },
+                    storySolver: { mastery: 0 }
+                }
+            },
+            currentGame: null,
+            gameState: {
+                question: null,
+                answer: '',
+                score: 0,
+                lives: 3,
+                questionsAnswered: 0,
+                correctStreak: 0,
+                difficulty: 'easy',
+                showExplanation: false
+            }
+        };
+
+        // Generate Problems
+        function generateProblem(type, difficulty) {
+            const ranges = {
+                easy: { min: 1, max: 10 },
+                medium: { min: 5, max: 20 },
+                hard: { min: 10, max: 50 }
+            };
+            const range = ranges[difficulty];
+
+            switch(type) {
+                case 'addition': {
+                    const a = Math.floor(Math.random() * range.max) + range.min;
+                    const b = Math.floor(Math.random() * range.max) + range.min;
+                    return {
+                        question: `${a} + ${b} = ?`,
+                        visual: '🎈'.repeat(Math.min(a, 15)) + ' + ' + '🎈'.repeat(Math.min(b, 15)),
+                        answer: a + b,
+                        type: 'addition',
+                        numbers: [a, b]
+                    };
+                }
+                case 'subtraction': {
+                    const a = Math.floor(Math.random() * range.max) + range.min + 5;
+                    const b = Math.floor(Math.random() * Math.min(a, range.max)) + 1;
+                    return {
+                        question: `${a} - ${b} = ?`,
+                        visual: '⭐'.repeat(Math.min(a, 15)),
+                        answer: a - b,
+                        type: 'subtraction',
+                        numbers: [a, b]
+                    };
+                }
+                case 'patterns': {
+                    const start = Math.floor(Math.random() * 5) + 1;
+                    const step = Math.floor(Math.random() * 3) + 2;
+                    const seq = [start, start + step, start + step * 2];
+                    return {
+                        question: `What comes next? ${seq.join(', ')}, __`,
+                        answer: start + step * 3,
+                        type: 'patterns',
+                        sequence: seq,
+                        step: step
+                    };
+                }
+                case 'placeValue': {
+                    const num = Math.floor(Math.random() * 90) + 10;
+                    return {
+                        question: `What number has ${Math.floor(num/10)} tens and ${num%10} ones?`,
+                        answer: num,
+                        type: 'placeValue',
+                        tens: Math.floor(num/10),
+                        ones: num % 10
+                    };
+                }
+                case 'skipCount': {
+                    const skipBy = [2, 5, 10][Math.floor(Math.random() * 3)];
+                    const start = skipBy === 2 ? Math.floor(Math.random() * 5) * 2 :
+                                 skipBy === 5 ? Math.floor(Math.random() * 4) * 5 :
+                                 Math.floor(Math.random() * 3) * 10;
+                    const sequence = [start, start + skipBy, start + skipBy * 2, start + skipBy * 3];
+                    return {
+                        question: `Skip count by ${skipBy}s: ${sequence.slice(0, 3).join(', ')}, __`,
+                        answer: sequence[3],
+                        type: 'skipCount',
+                        skipBy: skipBy,
+                        sequence: sequence.slice(0, 3)
+                    };
+                }
+                case 'storySolver': {
+                    const stories = [
+                        {
+                            story: `Emma has ${range.min + 3} apples. She gives ${range.min} apples to her friend. How many apples does Emma have left?`,
+                            answer: 3,
+                            operation: 'subtraction',
+                            numbers: [range.min + 3, range.min]
+                        },
+                        {
+                            story: `There are ${range.min + 2} birds on a tree. ${range.min} more birds fly to the tree. How many birds are on the tree now?`,
+                            answer: range.min + range.min + 2,
+                            operation: 'addition',
+                            numbers: [range.min + 2, range.min]
+                        },
+                        {
+                            story: `Sam has ${range.min + 5} toy cars. His brother has ${range.min + 2} toy cars. How many toy cars do they have together?`,
+                            answer: range.min + 5 + range.min + 2,
+                            operation: 'addition',
+                            numbers: [range.min + 5, range.min + 2]
+                        },
+                        {
+                            story: `A basket has ${range.min + 7} oranges. Mom uses ${range.min + 2} oranges to make juice. How many oranges are left?`,
+                            answer: 5,
+                            operation: 'subtraction',
+                            numbers: [range.min + 7, range.min + 2]
+                        }
+                    ];
+                    const selected = stories[Math.floor(Math.random() * stories.length)];
+                    return {
+                        question: selected.story,
+                        answer: selected.answer,
+                        type: 'storySolver',
+                        operation: selected.operation,
+                        numbers: selected.numbers
+                    };
+                }
+            }
+        }
+
+        // Start Game
+        function startGame(gameType) {
+            state.currentGame = gameType;
+            state.gameState = {
+                question: generateProblem(gameType, 'easy'),
+                answer: '',
+                score: 0,
+                lives: 3,
+                questionsAnswered: 0,
+                correctStreak: 0,
+                difficulty: 'easy',
+                showExplanation: false
+            };
+            state.screen = 'playing';
+            render();
+        }
+
+        // Check Answer
+        function checkAnswer() {
+            const userAnswer = parseInt(state.gameState.answer);
+            const isCorrect = userAnswer === state.gameState.question.answer;
+
+            if (isCorrect) {
+                const points = state.gameState.difficulty === 'hard' ? 15 : 
+                              state.gameState.difficulty === 'medium' ? 10 : 5;
+                state.gameState.score += points;
+                state.gameState.correctStreak++;
+                state.gameState.questionsAnswered++;
+
+                // Adaptive difficulty
+                if (state.gameState.correctStreak >= 3 && state.gameState.difficulty === 'easy') {
+                    state.gameState.difficulty = 'medium';
+                } else if (state.gameState.correctStreak >= 5 && state.gameState.difficulty === 'medium') {
+                    state.gameState.difficulty = 'hard';
+                }
+
+                setTimeout(() => {
+                    state.gameState.question = generateProblem(state.currentGame, state.gameState.difficulty);
+                    state.gameState.answer = '';
+                    render();
+                }, 1500);
+            } else {
+                state.gameState.lives--;
+                state.gameState.correctStreak = 0;
+                state.gameState.showExplanation = true;
+                if (state.gameState.difficulty === 'hard') state.gameState.difficulty = 'medium';
+                else if (state.gameState.difficulty === 'medium') state.gameState.difficulty = 'easy';
+            }
+            render();
+        }
+
+        function continueAfterExplanation() {
+            if (state.gameState.lives <= 0) {
+                endGame();
+            } else {
+                state.gameState.question = generateProblem(state.currentGame, state.gameState.difficulty);
+                state.gameState.answer = '';
+                state.gameState.showExplanation = false;
+                render();
+            }
+        }
+
+        function endGame() {
+            const earnedStars = Math.floor(state.gameState.score / 20);
+            const earnedXP = state.gameState.score * 2;
+            state.playerData.stars += earnedStars;
+            state.playerData.xp += earnedXP;
+            state.playerData.level = Math.floor(state.playerData.xp / 100) + 1;
+            state.playerData.skills[state.currentGame].mastery = 
+                Math.min(100, state.playerData.skills[state.currentGame].mastery + 5);
+            state.screen = 'results';
+            render();
+        }
+
+        // Render Functions
+        function renderHome() {
+            const activities = [
+                { id: 'addition', name: 'Number Bridge', icon: '➕', color: 'bg-blue', desc: 'Cross the bridge by solving addition!' },
+                { id: 'subtraction', name: 'Treasure Hunt', icon: '➖', color: 'bg-purple-bg', desc: 'Find treasure by mastering subtraction!' },
+                { id: 'patterns', name: 'Pattern Quest', icon: '🔢', color: 'bg-green', desc: 'Discover magical patterns!' },
+                { id: 'placeValue', name: 'Castle Builder', icon: '🏰', color: 'bg-orange', desc: 'Build castles with place value!' },
+                { id: 'skipCount', name: 'Skip Count Champion', icon: '🎵', color: 'bg-teal', desc: 'Count by 2s, 5s, and 10s!' },
+                { id: 'storySolver', name: 'Story Solver', icon: '📖', color: 'bg-pink', desc: 'Solve fun math word problems!' }
+            ];
+
+            return `
+                <div class="bg-sky">
+                    <div class="container">
+                        <div class="card">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-4">
+                                    <div class="profile-pic profile-animate">
+                                        <img src="https://platform-cdn.anthropic.com/api/content/v1/3e64b1a5-a8bd-4054-b44e-6d7c3e2f71dd?size=fullsize" 
+                                             alt="SmartV"
+                                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23a855f7%22/><text x=%2250%22 y=%2250%22 font-size=%2240%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22>SV</text></svg>'">
+                                    </div>
+                                    <div>
+                                        <h1 class="text-3xl font-bold text-gray">${state.playerData.name}</h1>
+                                        <div class="flex items-center gap-2 mt-4">
+                                            <span class="font-bold text-gray">👑 Level ${state.playerData.level}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="badge badge-yellow">
+                                        <span class="text-2xl">⭐ ${state.playerData.stars}</span>
+                                    </div>
+                                    <button onclick="state.screen='progress'; render();" class="btn btn-purple px-6 py-3">
+                                        🏆 Progress
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray font-bold">XP to Next Level</span>
+                                    <span class="font-bold" style="color: #a855f7;">${state.playerData.xp % 100}/100</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${state.playerData.xp % 100}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card text-white" style="background: linear-gradient(to right, #3b82f6, #9333ea); padding: 2.5rem;">
+                            <h2 class="text-4xl font-bold mb-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 2.5rem;">✨</span> Welcome to SmartV!
+                            </h2>
+                            <p class="text-2xl" style="opacity: 0.95;">Choose your adventure and master math skills!</p>
+                        </div>
+
+                        <div class="grid grid-2">
+                            ${activities.map(a => `
+                                <div class="activity-card" onclick="startGame('${a.id}')">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="activity-icon ${a.color}">
+                                            ${a.icon}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <h3 class="text-2xl font-bold text-gray mb-2">${a.name}</h3>
+                                            <p class="text-gray">${a.desc}</p>
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar mb-2" style="height: 0.75rem;">
+                                        <div class="progress-skill" style="width: ${state.playerData.skills[a.id].mastery}%"></div>
+                                    </div>
+                                    <small class="text-gray">${state.playerData.skills[a.id].mastery}% Complete</small>
+                                    <button class="btn ${a.color} text-white btn-activity py-4">
+                                        🚀 Start Adventure
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getExplanation(q) {
+            if (q.type === 'addition') {
+                return `
+                    <div class="explanation">
+                        <h3>💡 Let's Learn Addition!</h3>
+                        <p>We have ${q.numbers[0]} + ${q.numbers[1]}</p>
+                        <div class="text-3xl mb-4">${q.visual}</div>
+                        <p>Method: Start at <strong style="color: #3b82f6;">${q.numbers[0]}</strong>, 
+                        then count up ${q.numbers[1]} more</p>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            } else if (q.type === 'subtraction') {
+                return `
+                    <div class="explanation" style="background: #f3e8ff;">
+                        <h3>💡 Let's Learn Subtraction!</h3>
+                        <p>We have ${q.numbers[0]} - ${q.numbers[1]}</p>
+                        <div class="text-3xl mb-4">${q.visual}</div>
+                        <p>Start at <strong style="color: #a855f7;">${q.numbers[0]}</strong>, 
+                        take away ${q.numbers[1]}</p>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            } else if (q.type === 'patterns') {
+                return `
+                    <div class="explanation" style="background: #d1fae5;">
+                        <h3>💡 Let's Find the Pattern!</h3>
+                        <p>The sequence: ${q.sequence.join(', ')}, __</p>
+                        <p>The pattern is: <strong style="color: #10b981;">add ${q.step} each time!</strong></p>
+                        <p>${q.sequence[2]} + ${q.step} = ${q.answer}</p>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            } else if (q.type === 'placeValue') {
+                return `
+                    <div class="explanation" style="background: #fed7aa;">
+                        <h3>💡 Let's Learn Place Value!</h3>
+                        <p>${q.tens} tens and ${q.ones} ones = ?</p>
+                        <p><strong style="color: #3b82f6;">${q.tens} tens</strong> = ${q.tens * 10}</p>
+                        <p><strong style="color: #10b981;">${q.ones} ones</strong> = ${q.ones}</p>
+                        <p>${q.tens * 10} + ${q.ones} = ${q.answer}</p>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            } else if (q.type === 'skipCount') {
+                return `
+                    <div class="explanation" style="background: #ccfbf1;">
+                        <h3>💡 Let's Learn Skip Counting!</h3>
+                        <p>We're counting by <strong style="color: #14b8a6;">${q.skipBy}s</strong>!</p>
+                        <p>The pattern: ${q.sequence.join(', ')}, __</p>
+                        <div class="text-2xl mb-4" style="background: white; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+                            ${q.sequence.map((num, i) => `
+                                <span style="color: #14b8a6; font-weight: bold;">${num}</span>
+                                ${i < q.sequence.length - 1 ? '<span style="color: #6b7280;"> → </span>' : ''}
+                            `).join('')}
+                            <span style="color: #6b7280;"> → </span>
+                            <span style="color: #10b981; font-weight: bold;">?</span>
+                        </div>
+                        <p>Each number is <strong style="color: #14b8a6;">${q.skipBy}</strong> more than the one before!</p>
+                        <p class="text-2xl" style="margin-top: 1rem;">${q.sequence[2]} + ${q.skipBy} = <strong style="color: #14b8a6;">${q.answer}</strong></p>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            } else if (q.type === 'storySolver') {
+                const operationText = q.operation === 'addition' ? 'adding' : 'subtracting';
+                const symbol = q.operation === 'addition' ? '+' : '-';
+                return `
+                    <div class="explanation" style="background: #fce7f3;">
+                        <h3>💡 Let's Solve This Story Problem!</h3>
+                        <p style="font-size: 1.125rem; line-height: 1.6; margin-bottom: 1rem;">${q.question}</p>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0;">
+                            <p style="margin-bottom: 0.75rem;"><strong style="color: #ec4899;">Step 1:</strong> Find the numbers</p>
+                            <p style="font-size: 1.25rem; margin-bottom: 1rem;">
+                                <span style="color: #3b82f6; font-weight: bold;">${q.numbers[0]}</span> and 
+                                <span style="color: #10b981; font-weight: bold;">${q.numbers[1]}</span>
+                            </p>
+                            <p style="margin-bottom: 0.75rem;"><strong style="color: #ec4899;">Step 2:</strong> We need to ${operationText === 'adding' ? 'add them together' : 'subtract'}</p>
+                            <p style="font-size: 1.5rem; font-weight: bold; color: #374151;">
+                                ${q.numbers[0]} ${symbol} ${q.numbers[1]} = ${q.answer}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="answer-box">
+                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderPlaying() {
+            const gs = state.gameState;
+            const icons = { 
+                addition: '🌉', 
+                subtraction: '💎', 
+                patterns: '🌲', 
+                placeValue: '🏰',
+                skipCount: '🎵',
+                storySolver: '📖'
+            };
+            
+            if (gs.showExplanation) {
+                return `
+                    <div class="bg-indigo">
+                        <div class="container">
+                            <div class="card">
+                                <div class="text-center mb-6">
+                                    <div class="text-6xl mb-4">📚</div>
+                                    <h2 class="text-4xl font-bold text-gray mb-2">Let's Learn Together!</h2>
+                                </div>
+                                ${getExplanation(gs.question)}
+                                <button onclick="continueAfterExplanation()" class="btn btn-blue py-6" style="width: 100%; font-size: 1.5rem; margin-top: 1.5rem;">
+                                    🚀 ${gs.lives > 0 ? 'Try Another Problem!' : 'See Results'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="bg-indigo">
+                    <div class="container">
+                        <div class="card">
+                            <div class="flex justify-between items-center">
+                                <div class="flex gap-2 items-center">
+                                    ${[...Array(3)].map((_, i) => 
+                                        `<span style="font-size: 2rem;">${i < gs.lives ? '❤️' : '🖤'}</span>`
+                                    ).join('')}
+                                    <span class="text-gray" style="margin-left: 1rem;">
+                                        Difficulty: <strong style="color: #a855f7; text-transform: uppercase;">${gs.difficulty}</strong>
+                                    </span>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="badge badge-blue">
+                                        <span class="text-2xl font-bold" style="color: #3b82f6;">${gs.score}</span>
+                                    </div>
+                                    <div class="badge badge-green">
+                                        <span class="text-2xl font-bold" style="color: #10b981;">${gs.correctStreak} 🔥</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card text-center">
+                            <div class="text-6xl mb-6">${icons[state.currentGame]}</div>
+                            <h2 class="text-5xl font-bold text-gray mb-4">${gs.question.question}</h2>
+                            ${gs.question.visual ? `<div class="text-3xl mb-6 p-6" style="background: linear-gradient(to right, #eff6ff, #f5f3ff); border-radius: 1rem;">${gs.question.visual}</div>` : ''}
+                            
+                            <div style="max-width: 500px; margin: 0 auto;">
+                                <input type="number" id="answer" value="${gs.answer}" class="math-input" placeholder="?" autofocus>
+                                <button onclick="state.gameState.answer = document.getElementById('answer').value; checkAnswer();" 
+                                        class="btn btn-green py-6" style="width: 100%; font-size: 1.5rem;">
+                                    🎯 Check Answer!
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button onclick="endGame()" class="btn btn-red px-6 py-4">
+                                End Quest
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const earnedStars = Math.floor(state.gameState.score / 20);
+            const earnedXP = state.gameState.score * 2;
+            return `
+                <div class="bg-yellow" style="display: flex; align-items: center; justify-content: center;">
+                    <div class="card" style="max-width: 600px; width: 100%; margin: 2rem;">
+                        <div class="text-center">
+                            <div class="text-6xl mb-6">🎉</div>
+                            <h2 class="text-5xl font-bold text-gray mb-6">Quest Complete!</h2>
+                            <div class="grid grid-2 mb-6">
+                                <div class="stat-card badge-blue">
+                                    <div class="icon">💯</div>
+                                    <div class="value">${state.gameState.score}</div>
+                                    <div class="label">Points</div>
+                                </div>
+                                <div class="stat-card badge-green">
+                                    <div class="icon">✅</div>
+                                    <div class="value">${state.gameState.questionsAnswered}</div>
+                                    <div class="label">Questions</div>
+                                </div>
+                            </div>
+                            <div class="text-5xl font-bold mb-4" style="color: #eab308;">⭐ +${earnedStars} ⭐</div>
+                            <div class="text-2xl text-gray mb-6">+${earnedXP} XP earned!</div>
+                            <button onclick="startGame('${state.currentGame}')" class="btn btn-blue py-6 mb-4" style="width: 100%; font-size: 1.5rem;">
+                                🚀 Play Again
+                            </button>
+                            <button onclick="state.screen='home'; render();" class="btn btn-gray py-6" style="width: 100%; font-size: 1.5rem;">
+                                Back to Home
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgress() {
+            return `
+                <div class="bg-purple">
+                    <div class="container">
+                        <div class="card">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-4xl font-bold text-gray">🏆 Your Progress</h2>
+                                <button onclick="state.screen='home'; render();" class="btn btn-gray px-6 py-3">Back</button>
+                            </div>
+                            <div class="grid grid-3 mb-8">
+                                <div class="stat-card badge-yellow">
+                                    <div class="icon">👑</div>
+                                    <div class="value">${state.playerData.level}</div>
+                                    <div class="label">Level</div>
+                                </div>
+                                <div class="stat-card badge-blue">
+                                    <div class="icon">⭐</div>
+                                    <div class="value">${state.playerData.stars}</div>
+                                    <div class="label">Stars</div>
+                                </div>
+                                <div class="stat-card badge-purple">
+                                    <div class="icon">📈</div>
+                                    <div class="value">${state.playerData.xp}</div>
+                                    <div class="label">Total XP</div>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4 text-gray">Skill Mastery</h3>
+                            ${Object.entries(state.playerData.skills).map(([skill, data]) => {
+                                const names = { addition: 'Addition', subtraction: 'Subtraction', patterns: 'Patterns', placeValue: 'Place Value' };
+                                return `
+                                    <div class="p-6 mb-4" style="background: #f9fafb; border-radius: 1rem;">
+                                        <div class="flex justify-between mb-3">
+                                            <span class="text-2xl font-bold text-gray">${names[skill]}</span>
+                                            <span class="font-bold" style="color: #a855f7; font-size: 1.125rem;">${data.mastery}%</span>
+                                        </div>
+                                        <div class="progress-bar" style="height: 1.5rem;">
+                                            <div class="progress-skill" style="width: ${data.mastery}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function render() {
+            const screens = {
+                home: renderHome,
+                playing: renderPlaying,
+                results: renderResults,
+                progress: renderProgress
+            };
+            document.getElementById('app').innerHTML = screens[state.screen]();
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
