@@ -423,8 +423,8 @@
     <div id="app"></div>
 
     <script>
-        // Initialize or load saved data from memory
-        let appData = {
+        // Initialize or load saved data from localStorage
+        let appData = JSON.parse(localStorage.getItem('smartvData')) || {
             isSetup: false,
             adminCode: '',
             student: {
@@ -433,8 +433,19 @@
                 level: 1,
                 xp: 0,
                 stars: 0,
+                hintsAvailable: 5,
                 totalQuestionsAnswered: 0,
                 totalCorrect: 0,
+                difficultyPreferences: {
+                    addition: 'auto',
+                    subtraction: 'auto',
+                    patterns: 'auto',
+                    placeValue: 'auto',
+                    skipCount: 'auto',
+                    storySolver: 'auto',
+                    moneyMaster: 'auto',
+                    compareNumbers: 'auto'
+                },
                 skills: {
                     addition: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
                     subtraction: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
@@ -454,6 +465,8 @@
             screen: 'setup',
             currentGame: null,
             showHint: false,
+            soundEnabled: true,
+            musicEnabled: true,
             gameState: {
                 question: null,
                 answer: '',
@@ -468,6 +481,157 @@
                 mistakes: []
             }
         };
+
+        // Sound System
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let backgroundMusic = null;
+        let musicGainNode = null;
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'click':
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                    
+                case 'correct':
+                    // Happy ascending notes
+                    const notes = [523.25, 659.25, 783.99]; // C, E, G
+                    notes.forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.15, audioContext.currentTime + i * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.3);
+                        osc.start(audioContext.currentTime + i * 0.1);
+                        osc.stop(audioContext.currentTime + i * 0.1 + 0.3);
+                    });
+                    return; // Skip the default oscillator
+                    
+                case 'wrong':
+                    // Sad descending notes
+                    oscillator.frequency.value = 200;
+                    oscillator.type = 'sawtooth';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                    break;
+                    
+                case 'complete':
+                    // Victory fanfare
+                    const victoryNotes = [523.25, 659.25, 783.99, 1046.50]; // C, E, G, High C
+                    victoryNotes.forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle';
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.5);
+                        osc.start(audioContext.currentTime + i * 0.15);
+                        osc.stop(audioContext.currentTime + i * 0.15 + 0.5);
+                    });
+                    return;
+                    
+                case 'hint':
+                    oscillator.frequency.value = 1000;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+            }
+        }
+
+        function startBackgroundMusic() {
+            if (!state.musicEnabled || backgroundMusic) return;
+            
+            // Create a simple cheerful melody loop
+            const melody = [
+                {freq: 523.25, duration: 0.3}, // C
+                {freq: 587.33, duration: 0.3}, // D
+                {freq: 659.25, duration: 0.3}, // E
+                {freq: 523.25, duration: 0.3}, // C
+                {freq: 659.25, duration: 0.4}, // E
+                {freq: 523.25, duration: 0.4}, // C
+            ];
+            
+            musicGainNode = audioContext.createGain();
+            musicGainNode.gain.value = 0.03; // Quiet background music
+            musicGainNode.connect(audioContext.destination);
+            
+            let currentTime = audioContext.currentTime;
+            
+            function playMelody() {
+                if (!state.musicEnabled) return;
+                
+                melody.forEach((note, i) => {
+                    const osc = audioContext.createOscillator();
+                    osc.connect(musicGainNode);
+                    osc.frequency.value = note.freq;
+                    osc.type = 'sine';
+                    
+                    const startTime = currentTime;
+                    osc.start(startTime);
+                    osc.stop(startTime + note.duration);
+                    
+                    currentTime += note.duration;
+                });
+                
+                // Loop the melody
+                backgroundMusic = setTimeout(() => {
+                    currentTime = audioContext.currentTime;
+                    playMelody();
+                }, melody.reduce((sum, note) => sum + note.duration, 0) * 1000);
+            }
+            
+            playMelody();
+        }
+
+        function stopBackgroundMusic() {
+            if (backgroundMusic) {
+                clearTimeout(backgroundMusic);
+                backgroundMusic = null;
+            }
+            if (musicGainNode) {
+                musicGainNode.disconnect();
+                musicGainNode = null;
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            playSound('click');
+            render();
+        }
+
+        function toggleMusic() {
+            state.musicEnabled = !state.musicEnabled;
+            if (state.musicEnabled && state.screen === 'playing') {
+                startBackgroundMusic();
+            } else {
+                stopBackgroundMusic();
+            }
+            render();
+        }
 
         // Setup Screen
         function renderSetup() {
@@ -512,6 +676,7 @@
 
         let selectedAvatar = '🦸';
         function selectAvatar(emoji) {
+            playSound('click');
             selectedAvatar = emoji;
             document.querySelectorAll('[id^="avatar-"]').forEach(btn => btn.classList.remove('selected'));
             document.getElementById(`avatar-${emoji}`).classList.add('selected');
@@ -522,18 +687,32 @@
             const code = document.getElementById('adminCode').value.trim();
             
             if (!name) {
+                playSound('wrong');
                 alert('Please enter your name! 😊');
                 return;
             }
             if (code.length !== 4 || !/^\d+$/.test(code)) {
+                playSound('wrong');
                 alert('Admin code must be 4 digits! 🔢');
                 return;
             }
             
+            playSound('complete');
             appData.isSetup = true;
             appData.adminCode = code;
             appData.student.name = name;
             appData.student.avatar = selectedAvatar;
+            appData.student.hintsAvailable = 5;
+            appData.student.difficultyPreferences = {
+                addition: 'auto',
+                subtraction: 'auto',
+                patterns: 'auto',
+                placeValue: 'auto',
+                skipCount: 'auto',
+                storySolver: 'auto',
+                moneyMaster: 'auto',
+                compareNumbers: 'auto'
+            };
             state.screen = 'home';
             render();
         }
@@ -683,10 +862,20 @@
         }
 
         function startGame(gameType) {
+            playSound('click');
             state.currentGame = gameType;
             state.showHint = false;
             const skill = appData.student.skills[gameType];
-            const diff = skill.mastery < 30 ? 'easy' : skill.mastery < 70 ? 'medium' : 'hard';
+            
+            // Check difficulty preference
+            let diff;
+            const pref = appData.student.difficultyPreferences[gameType];
+            if (pref === 'auto') {
+                diff = skill.mastery < 30 ? 'easy' : skill.mastery < 70 ? 'medium' : 'hard';
+            } else {
+                diff = pref;
+            }
+            
             state.gameState = {
                 question: generateProblem(gameType, diff),
                 answer: '',
@@ -701,22 +890,52 @@
                 mistakes: []
             };
             state.screen = 'playing';
+            
+            // Start background music
+            setTimeout(() => startBackgroundMusic(), 100);
+            
             render();
         }
 
         function toggleHint() {
+            if (!state.showHint && appData.student.hintsAvailable <= 0) {
+                playSound('wrong');
+                alert('No hints available! 💡 Answer questions correctly to earn more hints!');
+                return;
+            }
+            
+            if (!state.showHint) {
+                appData.student.hintsAvailable--;
+                playSound('hint');
+            } else {
+                playSound('click');
+            }
+            
             state.showHint = !state.showHint;
             render();
         }
 
         function resetProgress() {
+            playSound('click');
             if (confirm('Are you sure you want to reset ALL progress? This cannot be undone! 🔄')) {
                 if (confirm('Really reset everything? All stars, XP, and progress will be lost! 😮')) {
+                    playSound('complete');
                     appData.student.level = 1;
                     appData.student.xp = 0;
                     appData.student.stars = 0;
+                    appData.student.hintsAvailable = 5;
                     appData.student.totalQuestionsAnswered = 0;
                     appData.student.totalCorrect = 0;
+                    appData.student.difficultyPreferences = {
+                        addition: 'auto',
+                        subtraction: 'auto',
+                        patterns: 'auto',
+                        placeValue: 'auto',
+                        skipCount: 'auto',
+                        storySolver: 'auto',
+                        moneyMaster: 'auto',
+                        compareNumbers: 'auto'
+                    };
                     appData.student.skills = {
                         addition: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
                         subtraction: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
@@ -732,7 +951,11 @@
                     state.screen = 'home';
                     render();
                     alert('Progress reset complete! Let\'s start fresh! 🌟');
+                } else {
+                    playSound('wrong');
                 }
+            } else {
+                playSound('wrong');
             }
         }
 
@@ -744,6 +967,7 @@
             appData.student.totalQuestionsAnswered++;
 
             if (isCorrect) {
+                playSound('correct');
                 const points = state.gameState.difficulty === 'hard' ? 15 : state.gameState.difficulty === 'medium' ? 10 : 5;
                 state.gameState.score += points;
                 state.gameState.correctStreak++;
@@ -752,13 +976,22 @@
                 appData.student.totalCorrect++;
                 appData.student.skills[state.currentGame].timeSpent += timeSpent;
                 
+                // Award hint every 3 correct answers
+                if (appData.student.totalCorrect % 3 === 0) {
+                    appData.student.hintsAvailable++;
+                }
+                
                 const accuracy = appData.student.skills[state.currentGame].correct / appData.student.skills[state.currentGame].total;
                 appData.student.skills[state.currentGame].mastery = Math.min(100, Math.floor(accuracy * 100));
 
-                if (state.gameState.correctStreak >= 3 && state.gameState.difficulty === 'easy') {
-                    state.gameState.difficulty = 'medium';
-                } else if (state.gameState.correctStreak >= 5 && state.gameState.difficulty === 'medium') {
-                    state.gameState.difficulty = 'hard';
+                // Only adjust difficulty if in auto mode
+                const pref = appData.student.difficultyPreferences[state.currentGame];
+                if (pref === 'auto') {
+                    if (state.gameState.correctStreak >= 3 && state.gameState.difficulty === 'easy') {
+                        state.gameState.difficulty = 'medium';
+                    } else if (state.gameState.correctStreak >= 5 && state.gameState.difficulty === 'medium') {
+                        state.gameState.difficulty = 'hard';
+                    }
                 }
                 
                 setTimeout(() => {
@@ -768,12 +1001,17 @@
                     render();
                 }, 1000);
             } else {
+                playSound('wrong');
                 state.gameState.lives--;
                 state.gameState.correctStreak = 0;
                 state.gameState.mistakes.push({ question: state.gameState.question.question, correctAnswer: state.gameState.question.answer });
                 
-                if (state.gameState.difficulty === 'hard') state.gameState.difficulty = 'medium';
-                else if (state.gameState.difficulty === 'medium') state.gameState.difficulty = 'easy';
+                // Only adjust difficulty if in auto mode
+                const pref = appData.student.difficultyPreferences[state.currentGame];
+                if (pref === 'auto') {
+                    if (state.gameState.difficulty === 'hard') state.gameState.difficulty = 'medium';
+                    else if (state.gameState.difficulty === 'medium') state.gameState.difficulty = 'easy';
+                }
                 
                 appData.student.skills[state.currentGame].timeSpent += timeSpent;
 
@@ -792,6 +1030,9 @@
         }
 
         function endGame() {
+            stopBackgroundMusic();
+            playSound('complete');
+            
             const sessionTime = Date.now() - state.gameState.sessionStart;
             const earnedStars = Math.floor(state.gameState.score / 20);
             const earnedXP = state.gameState.score * 2;
@@ -841,10 +1082,16 @@
                                 </div>
                             </div>
                             <div class="flex gap-4">
+                                <div class="stat-badge" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);">
+                                    💡 ${appData.student.hintsAvailable}
+                                </div>
                                 <div class="stat-badge" style="background: linear-gradient(135deg, #FFD93D 0%, #FFB347 100%);">
                                     ⭐ ${appData.student.stars}
                                 </div>
-                                <button onclick="state.screen='parentDashboard'; requestAdminCode();" class="btn-round btn-primary">
+                                <button onclick="openSettings()" class="btn-round" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);">
+                                    ⚙️ Settings
+                                </button>
+                                <button onclick="playSound('click'); state.screen='parentDashboard'; requestAdminCode();" class="btn-round btn-primary">
                                     📊 Parent
                                 </button>
                             </div>
@@ -911,6 +1158,7 @@
                                 ${Array(3).fill(0).map((_, i) => `<span style="font-size: 3rem;">${i < gs.lives ? '❤️' : '🖤'}</span>`).join('')}
                             </div>
                             <div class="flex gap-4">
+                                <div class="stat-badge" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);">💡 ${appData.student.hintsAvailable}</div>
                                 <div class="stat-badge">💯 ${gs.score}</div>
                                 <div class="stat-badge" style="background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);">
                                     🔥 ${gs.correctStreak}
@@ -947,7 +1195,7 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <button onclick="endGame()" class="btn-round btn-warning">
+                        <button onclick="playSound('click'); endGame()" class="btn-round btn-warning">
                             🏠 End Game
                         </button>
                     </div>
@@ -984,16 +1232,127 @@
                         </div>
                         
                         <div class="flex gap-4 justify-center">
-                            <button onclick="startGame('${state.currentGame}')" class="btn-round btn-success" style="font-size: 1.3rem;">
+                            <button onclick="playSound('click'); startGame('${state.currentGame}')" class="btn-round btn-success" style="font-size: 1.3rem;">
                                 🚀 Play Again
                             </button>
-                            <button onclick="state.screen='home'; render();" class="btn-round btn-primary" style="font-size: 1.3rem;">
+                            <button onclick="playSound('click'); state.screen='home'; render();" class="btn-round btn-primary" style="font-size: 1.3rem;">
                                 🏠 Home
                             </button>
                         </div>
                     </div>
                 </div>
             `;
+        }
+
+        function openSettings() {
+            playSound('click');
+            const skillNames = {
+                addition: 'Number Bridge',
+                subtraction: 'Treasure Hunt',
+                patterns: 'Pattern Quest',
+                placeValue: 'Castle Builder',
+                skipCount: 'Skip Count',
+                storySolver: 'Story Solver',
+                moneyMaster: 'Money Master',
+                compareNumbers: 'Number Compare'
+            };
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px;">
+                    <h2 class="mb-4">⚙️ Game Settings</h2>
+                    
+                    <!-- Sound Controls -->
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; border: 3px solid #fbbf24;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #92400e;">🔊 Sound & Music</h3>
+                        <div class="flex gap-4">
+                            <button onclick="toggleSound()" class="btn-round ${state.soundEnabled ? 'btn-success' : ''}" style="flex: 1; padding: 1rem;">
+                                ${state.soundEnabled ? '🔊' : '🔇'} Sound Effects
+                            </button>
+                            <button onclick="toggleMusic()" class="btn-round ${state.musicEnabled ? 'btn-primary' : ''}" style="flex: 1; padding: 1rem;">
+                                ${state.musicEnabled ? '🎵' : '🔕'} Music
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p style="color: #7A6A5A; font-size: 1.1rem; margin-bottom: 2rem;">
+                        Choose difficulty level for each game. Select "Auto" to let the app adjust based on performance.
+                    </p>
+                    
+                    <div style="max-height: 400px; overflow-y: auto; margin-bottom: 2rem;">
+                        ${Object.keys(appData.student.difficultyPreferences).map(skill => `
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem;">
+                                <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #5A4A3A;">${skillNames[skill]}</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="setDifficulty('${skill}', 'auto')" 
+                                            id="diff-${skill}-auto"
+                                            class="btn-round ${appData.student.difficultyPreferences[skill] === 'auto' ? 'btn-primary' : ''}" 
+                                            style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                                        🤖 Auto
+                                    </button>
+                                    <button onclick="setDifficulty('${skill}', 'easy')" 
+                                            id="diff-${skill}-easy"
+                                            class="btn-round ${appData.student.difficultyPreferences[skill] === 'easy' ? 'btn-success' : ''}" 
+                                            style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                                        🌱 Easy
+                                    </button>
+                                    <button onclick="setDifficulty('${skill}', 'medium')" 
+                                            id="diff-${skill}-medium"
+                                            class="btn-round ${appData.student.difficultyPreferences[skill] === 'medium' ? 'btn-warning' : ''}" 
+                                            style="flex: 1; padding: 0.8rem; font-size: 1rem; background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);">
+                                        📚 Medium
+                                    </button>
+                                    <button onclick="setDifficulty('${skill}', 'hard')" 
+                                            id="diff-${skill}-hard"
+                                            class="btn-round ${appData.student.difficultyPreferences[skill] === 'hard' ? 'btn-warning' : ''}" 
+                                            style="flex: 1; padding: 0.8rem; font-size: 1rem; background: linear-gradient(135deg, #FF6B81 0%, #FF4757 100%);">
+                                        🔥 Hard
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #4338ca; margin-bottom: 0.5rem;">
+                            💡 Hints Available: ${appData.student.hintsAvailable}
+                        </div>
+                        <p style="color: #6366f1; font-size: 0.95rem;">
+                            Earn 1 hint for every 3 correct answers! 🎯
+                        </p>
+                    </div>
+                    
+                    <button onclick="closeSettingsModal()" class="btn-round btn-success" style="width: 100%;">
+                        ✅ Done
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function setDifficulty(skill, level) {
+            playSound('click');
+            appData.student.difficultyPreferences[skill] = level;
+            
+            // Update button styles
+            ['auto', 'easy', 'medium', 'hard'].forEach(diff => {
+                const btn = document.getElementById(`diff-${skill}-${diff}`);
+                if (btn) {
+                    btn.className = 'btn-round';
+                    if (diff === level) {
+                        if (diff === 'auto') btn.classList.add('btn-primary');
+                        else if (diff === 'easy') btn.classList.add('btn-success');
+                        else btn.classList.add('btn-warning');
+                    }
+                }
+            });
+        }
+
+        function closeSettingsModal() {
+            playSound('click');
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
         }
 
         function requestAdminCode() {
@@ -1018,15 +1377,18 @@
         function verifyCode() {
             const input = document.getElementById('codeInput').value;
             if (input === appData.adminCode) {
+                playSound('correct');
                 const modal = document.querySelector('.modal');
                 if (modal) modal.remove();
                 render();
             } else {
+                playSound('wrong');
                 alert('Wrong code! Try again 🔒');
             }
         }
 
         function cancelModal() {
+            playSound('click');
             const modal = document.querySelector('.modal');
             if (modal) modal.remove();
             state.screen = 'home';
@@ -1058,7 +1420,7 @@
                     <div class="card">
                         <div class="flex justify-between items-center mb-6">
                             <h1>📊 ${student.name}'s Progress Report</h1>
-                            <button onclick="state.screen='home'; render();" class="btn-round btn-warning">🏠 Home</button>
+                            <button onclick="playSound('click'); state.screen='home'; render();" class="btn-round btn-warning">🏠 Home</button>
                         </div>
                         
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 25px; margin-bottom: 2rem;">
