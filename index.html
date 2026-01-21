@@ -3,156 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartV - Math Learning App</title>
+    <title>SmartV - Math Learning Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         
-        /* Gradients */
-        .bg-sky { background: linear-gradient(to bottom, #7dd3fc, #bae6fd, #86efac); min-height: 100vh; }
-        .bg-indigo { background: linear-gradient(to bottom, #818cf8, #a78bfa, #f9a8d4); min-height: 100vh; }
-        .bg-yellow { background: linear-gradient(to bottom, #fde047, #fdba74, #fca5a5); min-height: 100vh; }
-        .bg-purple { background: linear-gradient(to bottom, #d8b4fe, #f9a8d4, #fca5a5); min-height: 100vh; }
-        .bg-gradient-blue { background: linear-gradient(to right, #3b82f6, #9333ea); }
-        .bg-gradient-green { background: linear-gradient(to right, #10b981, #3b82f6); }
+        body { 
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFB6C1 0%, #FFE5B4 50%, #B0E0E6 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
         
-        /* Utilities */
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-        .card { background: white; border-radius: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 1.5rem; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .gap-1 { gap: 0.25rem; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .gap-6 { gap: 1.5rem; }
+        /* Decorative Background Elements */
+        .bg-decoration {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200"><path fill="%2398D8C8" d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z"/><path fill="%2367C7B3" d="M0,130 Q300,100 600,130 T1200,130 L1200,200 L0,200 Z"/></svg>') bottom center/cover no-repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .clouds {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            height: 100px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.6;
+            animation: float-cloud 30s infinite;
+        }
+        
+        @keyframes float-cloud {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Playful Cards */
+        .card {
+            background: white;
+            border-radius: 30px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        /* Character Avatar */
+        .character-big {
+            font-size: 8rem;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Rounded Buttons */
+        .btn-round {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFB347 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 179, 71, 0.4);
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-round:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 179, 71, 0.5);
+        }
+        
+        .btn-round:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #67C7B3 0%, #4FA899 100%); box-shadow: 0 8px 20px rgba(103, 199, 179, 0.4); }
+        .btn-success { background: linear-gradient(135deg, #98D8C8 0%, #67C7B3 100%); box-shadow: 0 8px 20px rgba(152, 216, 200, 0.4); }
+        .btn-warning { background: linear-gradient(135deg, #FF9AA2 0%, #FF6B81 100%); box-shadow: 0 8px 20px rgba(255, 154, 162, 0.4); }
+        
+        /* Problem Card (like the yellow card in image) */
+        .problem-card {
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD98E 100%);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            border: 5px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .problem-text {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #8B6F47;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Answer Grid (like the green tiles) */
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            padding: 2rem;
+        }
+        
+        .answer-tile {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #67C7B3 0%, #4FA899 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(103, 199, 179, 0.3);
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .answer-tile:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(103, 199, 179, 0.4);
+        }
+        
+        .answer-tile:active {
+            transform: translateY(-3px) scale(1.02);
+        }
+        
+        /* Activity Tiles */
+        .activity-tile {
+            background: white;
+            border-radius: 25px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 4px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .activity-tile:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .activity-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Banner (like the teal ribbon) */
+        .banner {
+            background: linear-gradient(135deg, #67C7B3 0%, #4FA899 100%);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(103, 199, 179, 0.3);
+            margin-bottom: 2rem;
+            font-family: 'Fredoka', sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .banner::before,
+        .banner::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        
+        .banner::before {
+            left: -15px;
+            border-width: 25px 15px 25px 0;
+            border-color: transparent #4FA899 transparent transparent;
+            transform: translateY(-50%);
+        }
+        
+        .banner::after {
+            right: -15px;
+            border-width: 25px 0 25px 15px;
+            border-color: transparent transparent transparent #4FA899;
+            transform: translateY(-50%);
+        }
+        
+        /* Avatar Selection */
+        .avatar-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+        
+        .avatar-option {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD98E 100%);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 4px solid transparent;
+        }
+        
+        .avatar-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .avatar-option.selected {
+            border-color: #67C7B3;
+            background: linear-gradient(135deg, #98D8C8 0%, #67C7B3 100%);
+            transform: scale(1.15);
+        }
+        
+        /* Input Fields */
+        input {
+            background: white;
+            border: 4px solid #E8F5F2;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.3rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        input:focus {
+            border-color: #67C7B3;
+            box-shadow: 0 0 0 4px rgba(103, 199, 179, 0.2), inset 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 100px;
+            height: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD93D 0%, #FFB347 100%);
+            border-radius: 100px;
+            transition: width 0.5s;
+            box-shadow: 0 2px 10px rgba(255, 179, 71, 0.5);
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Stats Display */
+        .stat-badge {
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD98E 100%);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Help Button */
+        .help-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #98D8C8 0%, #67C7B3 100%);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(103, 199, 179, 0.4);
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(103, 199, 179, 0.5);
+        }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 5px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Grid Layouts */
         .grid { display: grid; gap: 1.5rem; }
         .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
         .grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
         
-        /* Text */
-        .text-center { text-align: center; }
-        .text-white { color: white; }
-        .text-gray { color: #4b5563; }
-        .text-2xl { font-size: 1.5rem; }
-        .text-3xl { font-size: 1.875rem; }
-        .text-4xl { font-size: 2.25rem; }
-        .text-5xl { font-size: 3rem; }
-        .text-6xl { font-size: 3.75rem; }
-        .font-bold { font-weight: 700; }
+        /* Flex */
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
         
-        /* Spacing */
+        /* Typography */
+        h1 { font-size: 3rem; font-weight: 800; font-family: 'Fredoka', sans-serif; color: #5A4A3A; }
+        h2 { font-size: 2.5rem; font-weight: 700; font-family: 'Fredoka', sans-serif; color: #5A4A3A; }
+        h3 { font-size: 2rem; font-weight: 600; font-family: 'Fredoka', sans-serif; color: #5A4A3A; }
+        
+        /* Utility */
+        .text-center { text-align: center; }
         .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 0.75rem; }
         .mb-4 { margin-bottom: 1rem; }
         .mb-6 { margin-bottom: 1.5rem; }
-        .mb-8 { margin-bottom: 2rem; }
         .mt-4 { margin-top: 1rem; }
-        .p-4 { padding: 1rem; }
-        .p-6 { padding: 1.5rem; }
-        .p-8 { padding: 2rem; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .hidden { display: none; }
         
-        /* Profile Picture */
-        .profile-pic { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; border: 4px solid #a855f7; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* Animations */
-        @keyframes float { 
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
-        @keyframes shimmer {
-            0% { box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.6), 0 0 30px rgba(59, 130, 246, 0.4); }
-            100% { box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); }
-        }
-        .profile-animate { animation: float 3s ease-in-out infinite, shimmer 2s ease-in-out infinite; }
-        
-        /* Buttons */
-        .btn { border: none; cursor: pointer; font-weight: 700; border-radius: 1rem; transition: all 0.2s; font-size: 1.125rem; }
-        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
-        .btn-purple { background: #a855f7; color: white; }
-        .btn-blue { background: linear-gradient(to right, #3b82f6, #a855f7); color: white; }
-        .btn-green { background: linear-gradient(to right, #10b981, #3b82f6); color: white; }
-        .btn-red { background: #ef4444; color: white; }
-        .btn-gray { background: #6b7280; color: white; }
-        .btn-activity { width: 100%; margin-top: 1rem; }
-        
-        /* Activity Cards */
-        .activity-card { background: white; border-radius: 1.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .activity-card:hover { transform: scale(1.05); box-shadow: 0 20px 25px rgba(0,0,0,0.15); }
-        .activity-icon { width: 80px; height: 80px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .bg-blue { background: #3b82f6; }
-        .bg-purple-bg { background: #a855f7; }
-        .bg-green { background: #10b981; }
-        .bg-orange { background: #f97316; }
-        .bg-teal { background: #14b8a6; }
-        .bg-pink { background: #ec4899; }
-        
-        /* Progress Bars */
-        .progress-bar { width: 100%; height: 1rem; background: #e5e7eb; border-radius: 9999px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(to right, #a855f7, #ec4899); transition: width 0.5s; border-radius: 9999px; }
-        .progress-skill { background: linear-gradient(to right, #10b981, #3b82f6); }
-        
-        /* Input */
-        .math-input { width: 100%; font-size: 3.75rem; text-align: center; font-weight: 700; border: 4px solid #d8b4fe; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; outline: none; }
-        .math-input:focus { border-color: #a855f7; }
-        
-        /* Badges */
-        .badge { padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
-        .badge-yellow { background: #fef3c7; }
-        .badge-blue { background: #dbeafe; }
-        .badge-green { background: #d1fae5; }
-        .badge-purple { background: #e9d5ff; }
-        
-        /* Stats Cards */
-        .stat-card { border-radius: 1rem; padding: 1.5rem; text-align: center; }
-        .stat-card .icon { font-size: 3rem; margin-bottom: 0.75rem; }
-        .stat-card .value { font-size: 2.25rem; font-weight: 700; color: #1f2937; }
-        .stat-card .label { color: #6b7280; font-weight: 600; }
-        
-        /* Explanation Box */
-        .explanation { background: #dbeafe; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem; }
-        .explanation h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
-        .explanation p { font-size: 1.125rem; margin-bottom: 0.75rem; color: #374151; }
-        .answer-box { background: #10b981; color: white; padding: 1.5rem; border-radius: 1rem; }
-        
-        /* Responsive */
         @media (max-width: 768px) {
-            .text-5xl { font-size: 2rem; }
-            .text-6xl { font-size: 2.5rem; }
-            .math-input { font-size: 2.5rem; }
+            .container { padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .problem-text { font-size: 2.5rem; }
+            .answer-tile { font-size: 1.8rem; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <div class="clouds">
+        <div class="cloud" style="width: 100px; height: 50px; top: 20px; left: 10%;"></div>
+        <div class="cloud" style="width: 150px; height: 70px; top: 50px; left: 60%;"></div>
+        <div class="cloud" style="width: 120px; height: 60px; top: 30px; left: 85%;"></div>
+    </div>
+    <div class="bg-decoration"></div>
+    
     <div id="app"></div>
 
     <script>
-        // App State
-        let state = {
-            screen: 'home',
-            playerData: {
-                name: 'SmartV Student',
+        // Initialize or load saved data
+        let appData = JSON.parse(localStorage.getItem('smartvData')) || {
+            isSetup: false,
+            adminCode: '',
+            student: {
+                name: '',
+                avatar: '🦸',
                 level: 1,
                 xp: 0,
                 stars: 0,
+                totalQuestionsAnswered: 0,
+                totalCorrect: 0,
                 skills: {
-                    addition: { mastery: 0 },
-                    subtraction: { mastery: 0 },
-                    patterns: { mastery: 0 },
-                    placeValue: { mastery: 0 },
-                    skipCount: { mastery: 0 },
-                    storySolver: { mastery: 0 }
-                }
-            },
+                    addition: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
+                    subtraction: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
+                    patterns: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
+                    placeValue: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
+                    skipCount: { mastery: 0, correct: 0, total: 0, timeSpent: 0 },
+                    storySolver: { mastery: 0, correct: 0, total: 0, timeSpent: 0 }
+                },
+                sessions: [],
+                achievements: []
+            }
+        };
+
+        let state = {
+            screen: appData.isSetup ? 'home' : 'setup',
             currentGame: null,
             gameState: {
                 question: null,
@@ -162,11 +458,88 @@
                 questionsAnswered: 0,
                 correctStreak: 0,
                 difficulty: 'easy',
-                showExplanation: false
+                showExplanation: false,
+                sessionStart: null,
+                questionStart: null,
+                mistakes: []
             }
         };
 
-        // Generate Problems
+        function saveData() {
+            localStorage.setItem('smartvData', JSON.stringify(appData));
+        }
+
+        // Setup Screen
+        function renderSetup() {
+            return `
+                <div class="container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+                    <div class="card" style="max-width: 700px;">
+                        <div class="text-center mb-6">
+                            <div class="character-big">🎓</div>
+                            <h1 class="mb-4">Welcome to SmartV!</h1>
+                            <p style="font-size: 1.4rem; color: #7A6A5A;">Let's start your math adventure!</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label style="display: block; font-weight: 700; margin-bottom: 0.75rem; color: #5A4A3A; font-size: 1.3rem; font-family: 'Fredoka', sans-serif;">What's your name? ✨</label>
+                            <input type="text" id="studentName" placeholder="Type your name here" style="width: 100%;" />
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label style="display: block; font-weight: 700; margin-bottom: 1rem; color: #5A4A3A; font-size: 1.3rem; font-family: 'Fredoka', sans-serif;">Pick your character! 🎨</label>
+                            <div class="avatar-select">
+                                ${['🦸', '🧙', '🦄', '🐉', '🌟', '🚀'].map(emoji => `
+                                    <div onclick="selectAvatar('${emoji}')" id="avatar-${emoji}" class="avatar-option">
+                                        ${emoji}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6" style="background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%); padding: 2rem; border-radius: 25px; border: 4px solid rgba(255, 255, 255, 0.5);">
+                            <label style="display: block; font-weight: 700; margin-bottom: 0.75rem; color: #CC5555; font-size: 1.3rem; font-family: 'Fredoka', sans-serif;">👨‍👩‍👧 Parents: Set Admin Code</label>
+                            <p style="color: #AA4444; margin-bottom: 1rem; font-size: 1rem; font-weight: 600;">Create a 4-digit code to view progress reports</p>
+                            <input type="password" id="adminCode" placeholder="••••" maxlength="4" style="width: 100%;" />
+                        </div>
+                        
+                        <button onclick="completeSetup()" class="btn-round btn-success" style="width: 100%; font-size: 1.5rem; padding: 1.5rem;">
+                            🚀 Start Adventure!
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        let selectedAvatar = '🦸';
+        function selectAvatar(emoji) {
+            selectedAvatar = emoji;
+            document.querySelectorAll('[id^="avatar-"]').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`avatar-${emoji}`).classList.add('selected');
+        }
+
+        function completeSetup() {
+            const name = document.getElementById('studentName').value.trim();
+            const code = document.getElementById('adminCode').value.trim();
+            
+            if (!name) {
+                alert('Please enter your name! 😊');
+                return;
+            }
+            if (code.length !== 4 || !/^\d+$/.test(code)) {
+                alert('Admin code must be 4 digits! 🔢');
+                return;
+            }
+            
+            appData.isSetup = true;
+            appData.adminCode = code;
+            appData.student.name = name;
+            appData.student.avatar = selectedAvatar;
+            saveData();
+            state.screen = 'home';
+            render();
+        }
+
+        // Generate problems (keeping existing logic)
         function generateProblem(type, difficulty) {
             const ranges = {
                 easy: { min: 1, max: 10 },
@@ -180,22 +553,22 @@
                     const a = Math.floor(Math.random() * range.max) + range.min;
                     const b = Math.floor(Math.random() * range.max) + range.min;
                     return {
-                        question: `${a} + ${b} = ?`,
-                        visual: '🎈'.repeat(Math.min(a, 15)) + ' + ' + '🎈'.repeat(Math.min(b, 15)),
+                        question: `${a} + ${b}`,
                         answer: a + b,
                         type: 'addition',
-                        numbers: [a, b]
+                        numbers: [a, b],
+                        wrongAnswers: generateWrongAnswers(a + b, 3)
                     };
                 }
                 case 'subtraction': {
                     const a = Math.floor(Math.random() * range.max) + range.min + 5;
                     const b = Math.floor(Math.random() * Math.min(a, range.max)) + 1;
                     return {
-                        question: `${a} - ${b} = ?`,
-                        visual: '⭐'.repeat(Math.min(a, 15)),
+                        question: `${a} - ${b}`,
                         answer: a - b,
                         type: 'subtraction',
-                        numbers: [a, b]
+                        numbers: [a, b],
+                        wrongAnswers: generateWrongAnswers(a - b, 3)
                     };
                 }
                 case 'patterns': {
@@ -203,146 +576,163 @@
                     const step = Math.floor(Math.random() * 3) + 2;
                     const seq = [start, start + step, start + step * 2];
                     return {
-                        question: `What comes next? ${seq.join(', ')}, __`,
+                        question: `${seq.join(', ')}, __`,
                         answer: start + step * 3,
                         type: 'patterns',
                         sequence: seq,
-                        step: step
+                        step: step,
+                        wrongAnswers: generateWrongAnswers(start + step * 3, 3)
                     };
                 }
                 case 'placeValue': {
                     const num = Math.floor(Math.random() * 90) + 10;
                     return {
-                        question: `What number has ${Math.floor(num/10)} tens and ${num%10} ones?`,
+                        question: `${Math.floor(num/10)} tens + ${num%10} ones`,
                         answer: num,
                         type: 'placeValue',
                         tens: Math.floor(num/10),
-                        ones: num % 10
+                        ones: num % 10,
+                        wrongAnswers: generateWrongAnswers(num, 3)
                     };
                 }
                 case 'skipCount': {
                     const skipBy = [2, 5, 10][Math.floor(Math.random() * 3)];
-                    const start = skipBy === 2 ? Math.floor(Math.random() * 5) * 2 :
-                                 skipBy === 5 ? Math.floor(Math.random() * 4) * 5 :
-                                 Math.floor(Math.random() * 3) * 10;
-                    const sequence = [start, start + skipBy, start + skipBy * 2, start + skipBy * 3];
+                    const start = skipBy * Math.floor(Math.random() * 3);
+                    const seq = [start, start + skipBy, start + skipBy * 2];
                     return {
-                        question: `Skip count by ${skipBy}s: ${sequence.slice(0, 3).join(', ')}, __`,
-                        answer: sequence[3],
+                        question: `Count by ${skipBy}s: ${seq.join(', ')}, __`,
+                        answer: start + skipBy * 3,
                         type: 'skipCount',
                         skipBy: skipBy,
-                        sequence: sequence.slice(0, 3)
+                        sequence: seq,
+                        wrongAnswers: generateWrongAnswers(start + skipBy * 3, 3)
                     };
                 }
                 case 'storySolver': {
                     const stories = [
-                        {
-                            story: `Emma has ${range.min + 3} apples. She gives ${range.min} apples to her friend. How many apples does Emma have left?`,
-                            answer: 3,
-                            operation: 'subtraction',
-                            numbers: [range.min + 3, range.min]
-                        },
-                        {
-                            story: `There are ${range.min + 2} birds on a tree. ${range.min} more birds fly to the tree. How many birds are on the tree now?`,
-                            answer: range.min + range.min + 2,
-                            operation: 'addition',
-                            numbers: [range.min + 2, range.min]
-                        },
-                        {
-                            story: `Sam has ${range.min + 5} toy cars. His brother has ${range.min + 2} toy cars. How many toy cars do they have together?`,
-                            answer: range.min + 5 + range.min + 2,
-                            operation: 'addition',
-                            numbers: [range.min + 5, range.min + 2]
-                        },
-                        {
-                            story: `A basket has ${range.min + 7} oranges. Mom uses ${range.min + 2} oranges to make juice. How many oranges are left?`,
-                            answer: 5,
-                            operation: 'subtraction',
-                            numbers: [range.min + 7, range.min + 2]
-                        }
+                        { text: `{a} apples - {b} apples`, a: range.min + 5, b: range.min + 2, op: 'sub' },
+                        { text: `{a} birds + {b} birds`, a: range.min + 3, b: range.min + 2, op: 'add' },
+                        { text: `{a} toys + {b} toys`, a: range.min + 4, b: range.min + 3, op: 'add' }
                     ];
-                    const selected = stories[Math.floor(Math.random() * stories.length)];
+                    const story = stories[Math.floor(Math.random() * stories.length)];
+                    const answer = story.op === 'add' ? story.a + story.b : story.a - story.b;
                     return {
-                        question: selected.story,
-                        answer: selected.answer,
+                        question: story.text.replace('{a}', story.a).replace('{b}', story.b),
+                        answer: answer,
                         type: 'storySolver',
-                        operation: selected.operation,
-                        numbers: selected.numbers
+                        wrongAnswers: generateWrongAnswers(answer, 3)
                     };
                 }
             }
         }
 
-        // Start Game
+        function generateWrongAnswers(correct, count) {
+            const wrong = new Set();
+            while (wrong.size < count) {
+                const offset = Math.floor(Math.random() * 10) - 5;
+                const val = correct + offset;
+                if (val !== correct && val > 0) wrong.add(val);
+            }
+            return Array.from(wrong);
+        }
+
         function startGame(gameType) {
             state.currentGame = gameType;
+            const skill = appData.student.skills[gameType];
+            const diff = skill.mastery < 30 ? 'easy' : skill.mastery < 70 ? 'medium' : 'hard';
             state.gameState = {
-                question: generateProblem(gameType, 'easy'),
+                question: generateProblem(gameType, diff),
                 answer: '',
                 score: 0,
                 lives: 3,
                 questionsAnswered: 0,
                 correctStreak: 0,
-                difficulty: 'easy',
-                showExplanation: false
+                difficulty: diff,
+                showExplanation: false,
+                sessionStart: Date.now(),
+                questionStart: Date.now(),
+                mistakes: []
             };
             state.screen = 'playing';
             render();
         }
 
-        // Check Answer
-        function checkAnswer() {
-            const userAnswer = parseInt(state.gameState.answer);
+        function checkAnswer(userAnswer) {
             const isCorrect = userAnswer === state.gameState.question.answer;
+            const timeSpent = Date.now() - state.gameState.questionStart;
+            
+            appData.student.skills[state.currentGame].total++;
+            appData.student.totalQuestionsAnswered++;
 
             if (isCorrect) {
-                const points = state.gameState.difficulty === 'hard' ? 15 : 
-                              state.gameState.difficulty === 'medium' ? 10 : 5;
+                const points = state.gameState.difficulty === 'hard' ? 15 : state.gameState.difficulty === 'medium' ? 10 : 5;
                 state.gameState.score += points;
                 state.gameState.correctStreak++;
                 state.gameState.questionsAnswered++;
+                appData.student.skills[state.currentGame].correct++;
+                appData.student.totalCorrect++;
+                appData.student.skills[state.currentGame].timeSpent += timeSpent;
+                
+                const accuracy = appData.student.skills[state.currentGame].correct / appData.student.skills[state.currentGame].total;
+                appData.student.skills[state.currentGame].mastery = Math.min(100, Math.floor(accuracy * 100));
 
-                // Adaptive difficulty
                 if (state.gameState.correctStreak >= 3 && state.gameState.difficulty === 'easy') {
                     state.gameState.difficulty = 'medium';
                 } else if (state.gameState.correctStreak >= 5 && state.gameState.difficulty === 'medium') {
                     state.gameState.difficulty = 'hard';
                 }
 
+                saveData();
+                
                 setTimeout(() => {
                     state.gameState.question = generateProblem(state.currentGame, state.gameState.difficulty);
-                    state.gameState.answer = '';
+                    state.gameState.questionStart = Date.now();
                     render();
-                }, 1500);
+                }, 1000);
             } else {
                 state.gameState.lives--;
                 state.gameState.correctStreak = 0;
-                state.gameState.showExplanation = true;
+                state.gameState.mistakes.push({ question: state.gameState.question.question, correctAnswer: state.gameState.question.answer });
+                
                 if (state.gameState.difficulty === 'hard') state.gameState.difficulty = 'medium';
                 else if (state.gameState.difficulty === 'medium') state.gameState.difficulty = 'easy';
+                
+                appData.student.skills[state.currentGame].timeSpent += timeSpent;
+                saveData();
+
+                if (state.gameState.lives <= 0) {
+                    endGame();
+                } else {
+                    setTimeout(() => {
+                        state.gameState.question = generateProblem(state.currentGame, state.gameState.difficulty);
+                        state.gameState.questionStart = Date.now();
+                        render();
+                    }, 1500);
+                }
             }
             render();
         }
 
-        function continueAfterExplanation() {
-            if (state.gameState.lives <= 0) {
-                endGame();
-            } else {
-                state.gameState.question = generateProblem(state.currentGame, state.gameState.difficulty);
-                state.gameState.answer = '';
-                state.gameState.showExplanation = false;
-                render();
-            }
-        }
-
         function endGame() {
+            const sessionTime = Date.now() - state.gameState.sessionStart;
             const earnedStars = Math.floor(state.gameState.score / 20);
             const earnedXP = state.gameState.score * 2;
-            state.playerData.stars += earnedStars;
-            state.playerData.xp += earnedXP;
-            state.playerData.level = Math.floor(state.playerData.xp / 100) + 1;
-            state.playerData.skills[state.currentGame].mastery = 
-                Math.min(100, state.playerData.skills[state.currentGame].mastery + 5);
+            
+            appData.student.stars += earnedStars;
+            appData.student.xp += earnedXP;
+            appData.student.level = Math.floor(appData.student.xp / 100) + 1;
+            
+            appData.student.sessions.push({
+                date: new Date().toISOString(),
+                game: state.currentGame,
+                score: state.gameState.score,
+                correct: state.gameState.questionsAnswered,
+                total: state.gameState.questionsAnswered + state.gameState.mistakes.length,
+                time: sessionTime,
+                mistakes: state.gameState.mistakes
+            });
+            
+            saveData();
             state.screen = 'results';
             render();
         }
@@ -350,258 +740,120 @@
         // Render Functions
         function renderHome() {
             const activities = [
-                { id: 'addition', name: 'Number Bridge', icon: '➕', color: 'bg-blue', desc: 'Cross the bridge by solving addition!' },
-                { id: 'subtraction', name: 'Treasure Hunt', icon: '➖', color: 'bg-purple-bg', desc: 'Find treasure by mastering subtraction!' },
-                { id: 'patterns', name: 'Pattern Quest', icon: '🔢', color: 'bg-green', desc: 'Discover magical patterns!' },
-                { id: 'placeValue', name: 'Castle Builder', icon: '🏰', color: 'bg-orange', desc: 'Build castles with place value!' },
-                { id: 'skipCount', name: 'Skip Count Champion', icon: '🎵', color: 'bg-teal', desc: 'Count by 2s, 5s, and 10s!' },
-                { id: 'storySolver', name: 'Story Solver', icon: '📖', color: 'bg-pink', desc: 'Solve fun math word problems!' }
+                { id: 'addition', name: 'Number Bridge', icon: '➕', color: 'linear-gradient(135deg, #98D8C8 0%, #67C7B3 100%)' },
+                { id: 'subtraction', name: 'Treasure Hunt', icon: '➖', color: 'linear-gradient(135deg, #FFB6C1 0%, #FF9AA2 100%)' },
+                { id: 'patterns', name: 'Pattern Quest', icon: '🔢', color: 'linear-gradient(135deg, #B4E5D4 0%, #98D8C8 100%)' },
+                { id: 'placeValue', name: 'Castle Builder', icon: '🏰', color: 'linear-gradient(135deg, #FFD98E 0%, #FFB347 100%)' },
+                { id: 'skipCount', name: 'Skip Count', icon: '🎵', color: 'linear-gradient(135deg, #E0BBE4 0%, #D291BC 100%)' },
+                { id: 'storySolver', name: 'Story Solver', icon: '📖', color: 'linear-gradient(135deg, #FFDAB9 0%, #FFB6C1 100%)' }
             ];
 
             return `
-                <div class="bg-sky">
-                    <div class="container">
-                        <div class="card">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-4">
-                                    <div class="profile-pic profile-animate">
-                                        <img src="https://platform-cdn.anthropic.com/api/content/v1/3e64b1a5-a8bd-4054-b44e-6d7c3e2f71dd?size=fullsize" 
-                                             alt="SmartV"
-                                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23a855f7%22/><text x=%2250%22 y=%2250%22 font-size=%2240%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22>SV</text></svg>'">
+                <div class="container">
+                    <div class="card">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-4">
+                                <div style="font-size: 6rem;">${appData.student.avatar}</div>
+                                <div>
+                                    <h1>Hi ${appData.student.name}! 👋</h1>
+                                    <div class="stat-badge mt-4">
+                                        👑 Level ${appData.student.level}
                                     </div>
-                                    <div>
-                                        <h1 class="text-3xl font-bold text-gray">${state.playerData.name}</h1>
-                                        <div class="flex items-center gap-2 mt-4">
-                                            <span class="font-bold text-gray">👑 Level ${state.playerData.level}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex gap-4">
-                                    <div class="badge badge-yellow">
-                                        <span class="text-2xl">⭐ ${state.playerData.stars}</span>
-                                    </div>
-                                    <button onclick="state.screen='progress'; render();" class="btn btn-purple px-6 py-3">
-                                        🏆 Progress
-                                    </button>
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gray font-bold">XP to Next Level</span>
-                                    <span class="font-bold" style="color: #a855f7;">${state.playerData.xp % 100}/100</span>
+                            <div class="flex gap-4">
+                                <div class="stat-badge" style="background: linear-gradient(135deg, #FFD93D 0%, #FFB347 100%);">
+                                    ⭐ ${appData.student.stars}
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${state.playerData.xp % 100}%"></div>
-                                </div>
+                                <button onclick="state.screen='parentDashboard'; requestAdminCode();" class="btn-round btn-primary">
+                                    📊 Parent
+                                </button>
                             </div>
                         </div>
-
-                        <div class="card text-white" style="background: linear-gradient(to right, #3b82f6, #9333ea); padding: 2.5rem;">
-                            <h2 class="text-4xl font-bold mb-3" style="display: flex; align-items: center; gap: 0.75rem;">
-                                <span style="font-size: 2.5rem;">✨</span> Welcome to SmartV!
-                            </h2>
-                            <p class="text-2xl" style="opacity: 0.95;">Choose your adventure and master math skills!</p>
+                        
+                        <div style="margin-top: 2rem;">
+                            <div class="flex justify-between mb-2">
+                                <span style="font-weight: 700; color: #5A4A3A; font-size: 1.2rem;">Level Progress 🚀</span>
+                                <span style="font-weight: 800; color: #67C7B3; font-size: 1.2rem;">${appData.student.xp % 100}/100 XP</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-fill" style="width: ${appData.student.xp % 100}%;"></div>
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="grid grid-2">
-                            ${activities.map(a => `
-                                <div class="activity-card" onclick="startGame('${a.id}')">
-                                    <div class="flex items-center gap-4 mb-4">
-                                        <div class="activity-icon ${a.color}">
-                                            ${a.icon}
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <h3 class="text-2xl font-bold text-gray mb-2">${a.name}</h3>
-                                            <p class="text-gray">${a.desc}</p>
-                                        </div>
+                    <div class="banner">
+                        ✨ Choose Your Adventure! ✨
+                    </div>
+
+                    <div class="grid grid-2">
+                        ${activities.map(a => {
+                            const skill = appData.student.skills[a.id];
+                            return `
+                                <div class="activity-tile" onclick="startGame('${a.id}')">
+                                    <div class="activity-icon" style="background: ${a.color}; color: white;">
+                                        ${a.icon}
                                     </div>
-                                    <div class="progress-bar mb-2" style="height: 0.75rem;">
-                                        <div class="progress-skill" style="width: ${state.playerData.skills[a.id].mastery}%"></div>
+                                    <h3 class="text-center mb-4">${a.name}</h3>
+                                    <div class="progress-container" style="height: 20px;">
+                                        <div class="progress-fill" style="width: ${skill.mastery}%; background: ${a.color};"></div>
                                     </div>
-                                    <small class="text-gray">${state.playerData.skills[a.id].mastery}% Complete</small>
-                                    <button class="btn ${a.color} text-white btn-activity py-4">
-                                        🚀 Start Adventure
-                                    </button>
+                                    <p class="text-center mt-4" style="font-weight: 700; color: #67C7B3; font-size: 1.1rem;">
+                                        ${skill.mastery}% Mastered
+                                    </p>
                                 </div>
-                            `).join('')}
-                        </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
         }
 
-        function getExplanation(q) {
-            if (q.type === 'addition') {
-                return `
-                    <div class="explanation">
-                        <h3>💡 Let's Learn Addition!</h3>
-                        <p>We have ${q.numbers[0]} + ${q.numbers[1]}</p>
-                        <div class="text-3xl mb-4">${q.visual}</div>
-                        <p>Method: Start at <strong style="color: #3b82f6;">${q.numbers[0]}</strong>, 
-                        then count up ${q.numbers[1]} more</p>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            } else if (q.type === 'subtraction') {
-                return `
-                    <div class="explanation" style="background: #f3e8ff;">
-                        <h3>💡 Let's Learn Subtraction!</h3>
-                        <p>We have ${q.numbers[0]} - ${q.numbers[1]}</p>
-                        <div class="text-3xl mb-4">${q.visual}</div>
-                        <p>Start at <strong style="color: #a855f7;">${q.numbers[0]}</strong>, 
-                        take away ${q.numbers[1]}</p>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            } else if (q.type === 'patterns') {
-                return `
-                    <div class="explanation" style="background: #d1fae5;">
-                        <h3>💡 Let's Find the Pattern!</h3>
-                        <p>The sequence: ${q.sequence.join(', ')}, __</p>
-                        <p>The pattern is: <strong style="color: #10b981;">add ${q.step} each time!</strong></p>
-                        <p>${q.sequence[2]} + ${q.step} = ${q.answer}</p>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            } else if (q.type === 'placeValue') {
-                return `
-                    <div class="explanation" style="background: #fed7aa;">
-                        <h3>💡 Let's Learn Place Value!</h3>
-                        <p>${q.tens} tens and ${q.ones} ones = ?</p>
-                        <p><strong style="color: #3b82f6;">${q.tens} tens</strong> = ${q.tens * 10}</p>
-                        <p><strong style="color: #10b981;">${q.ones} ones</strong> = ${q.ones}</p>
-                        <p>${q.tens * 10} + ${q.ones} = ${q.answer}</p>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            } else if (q.type === 'skipCount') {
-                return `
-                    <div class="explanation" style="background: #ccfbf1;">
-                        <h3>💡 Let's Learn Skip Counting!</h3>
-                        <p>We're counting by <strong style="color: #14b8a6;">${q.skipBy}s</strong>!</p>
-                        <p>The pattern: ${q.sequence.join(', ')}, __</p>
-                        <div class="text-2xl mb-4" style="background: white; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
-                            ${q.sequence.map((num, i) => `
-                                <span style="color: #14b8a6; font-weight: bold;">${num}</span>
-                                ${i < q.sequence.length - 1 ? '<span style="color: #6b7280;"> → </span>' : ''}
-                            `).join('')}
-                            <span style="color: #6b7280;"> → </span>
-                            <span style="color: #10b981; font-weight: bold;">?</span>
-                        </div>
-                        <p>Each number is <strong style="color: #14b8a6;">${q.skipBy}</strong> more than the one before!</p>
-                        <p class="text-2xl" style="margin-top: 1rem;">${q.sequence[2]} + ${q.skipBy} = <strong style="color: #14b8a6;">${q.answer}</strong></p>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            } else if (q.type === 'storySolver') {
-                const operationText = q.operation === 'addition' ? 'adding' : 'subtracting';
-                const symbol = q.operation === 'addition' ? '+' : '-';
-                return `
-                    <div class="explanation" style="background: #fce7f3;">
-                        <h3>💡 Let's Solve This Story Problem!</h3>
-                        <p style="font-size: 1.125rem; line-height: 1.6; margin-bottom: 1rem;">${q.question}</p>
-                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0;">
-                            <p style="margin-bottom: 0.75rem;"><strong style="color: #ec4899;">Step 1:</strong> Find the numbers</p>
-                            <p style="font-size: 1.25rem; margin-bottom: 1rem;">
-                                <span style="color: #3b82f6; font-weight: bold;">${q.numbers[0]}</span> and 
-                                <span style="color: #10b981; font-weight: bold;">${q.numbers[1]}</span>
-                            </p>
-                            <p style="margin-bottom: 0.75rem;"><strong style="color: #ec4899;">Step 2:</strong> We need to ${operationText === 'adding' ? 'add them together' : 'subtract'}</p>
-                            <p style="font-size: 1.5rem; font-weight: bold; color: #374151;">
-                                ${q.numbers[0]} ${symbol} ${q.numbers[1]} = ${q.answer}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="answer-box">
-                        <p class="text-3xl font-bold">✅ The answer is: ${q.answer}</p>
-                    </div>
-                `;
-            }
-        }
-
         function renderPlaying() {
             const gs = state.gameState;
-            const icons = { 
-                addition: '🌉', 
-                subtraction: '💎', 
-                patterns: '🌲', 
-                placeValue: '🏰',
-                skipCount: '🎵',
-                storySolver: '📖'
-            };
-            
-            if (gs.showExplanation) {
-                return `
-                    <div class="bg-indigo">
-                        <div class="container">
-                            <div class="card">
-                                <div class="text-center mb-6">
-                                    <div class="text-6xl mb-4">📚</div>
-                                    <h2 class="text-4xl font-bold text-gray mb-2">Let's Learn Together!</h2>
+            const q = gs.question;
+            const allAnswers = [q.answer, ...q.wrongAnswers].sort(() => Math.random() - 0.5);
+
+            return `
+                <div class="container" style="padding-top: 2rem;">
+                    <div class="banner" style="margin-bottom: 2rem;">
+                        ${state.currentGame.charAt(0).toUpperCase() + state.currentGame.slice(1)}
+                    </div>
+
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex gap-2">
+                                ${Array(3).fill(0).map((_, i) => `<span style="font-size: 3rem;">${i < gs.lives ? '❤️' : '🖤'}</span>`).join('')}
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="stat-badge">💯 ${gs.score}</div>
+                                <div class="stat-badge" style="background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);">
+                                    🔥 ${gs.correctStreak}
                                 </div>
-                                ${getExplanation(gs.question)}
-                                <button onclick="continueAfterExplanation()" class="btn btn-blue py-6" style="width: 100%; font-size: 1.5rem; margin-top: 1.5rem;">
-                                    🚀 ${gs.lives > 0 ? 'Try Another Problem!' : 'See Results'}
-                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div class="problem-card">
+                                <div class="problem-text">${q.question}</div>
+                                <div style="font-size: 5rem; margin-top: 2rem;">?</div>
+                                <button class="help-btn" style="margin-top: 2rem;">?</button>
+                            </div>
+
+                            <div class="answer-grid">
+                                ${allAnswers.map(ans => `
+                                    <div class="answer-tile" onclick="checkAnswer(${ans})">
+                                        ${ans}
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                     </div>
-                `;
-            }
 
-            return `
-                <div class="bg-indigo">
-                    <div class="container">
-                        <div class="card">
-                            <div class="flex justify-between items-center">
-                                <div class="flex gap-2 items-center">
-                                    ${[...Array(3)].map((_, i) => 
-                                        `<span style="font-size: 2rem;">${i < gs.lives ? '❤️' : '🖤'}</span>`
-                                    ).join('')}
-                                    <span class="text-gray" style="margin-left: 1rem;">
-                                        Difficulty: <strong style="color: #a855f7; text-transform: uppercase;">${gs.difficulty}</strong>
-                                    </span>
-                                </div>
-                                <div class="flex gap-4">
-                                    <div class="badge badge-blue">
-                                        <span class="text-2xl font-bold" style="color: #3b82f6;">${gs.score}</span>
-                                    </div>
-                                    <div class="badge badge-green">
-                                        <span class="text-2xl font-bold" style="color: #10b981;">${gs.correctStreak} 🔥</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card text-center">
-                            <div class="text-6xl mb-6">${icons[state.currentGame]}</div>
-                            <h2 class="text-5xl font-bold text-gray mb-4">${gs.question.question}</h2>
-                            ${gs.question.visual ? `<div class="text-3xl mb-6 p-6" style="background: linear-gradient(to right, #eff6ff, #f5f3ff); border-radius: 1rem;">${gs.question.visual}</div>` : ''}
-                            
-                            <div style="max-width: 500px; margin: 0 auto;">
-                                <input type="number" id="answer" value="${gs.answer}" class="math-input" placeholder="?" autofocus>
-                                <button onclick="state.gameState.answer = document.getElementById('answer').value; checkAnswer();" 
-                                        class="btn btn-green py-6" style="width: 100%; font-size: 1.5rem;">
-                                    🎯 Check Answer!
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button onclick="endGame()" class="btn btn-red px-6 py-4">
-                                End Quest
-                            </button>
-                        </div>
+                    <div class="text-center mt-4">
+                        <button onclick="endGame()" class="btn-round btn-warning">
+                            🏠 End Game
+                        </button>
                     </div>
                 </div>
             `;
@@ -610,31 +862,37 @@
         function renderResults() {
             const earnedStars = Math.floor(state.gameState.score / 20);
             const earnedXP = state.gameState.score * 2;
+            
             return `
-                <div class="bg-yellow" style="display: flex; align-items: center; justify-content: center;">
-                    <div class="card" style="max-width: 600px; width: 100%; margin: 2rem;">
-                        <div class="text-center">
-                            <div class="text-6xl mb-6">🎉</div>
-                            <h2 class="text-5xl font-bold text-gray mb-6">Quest Complete!</h2>
-                            <div class="grid grid-2 mb-6">
-                                <div class="stat-card badge-blue">
-                                    <div class="icon">💯</div>
-                                    <div class="value">${state.gameState.score}</div>
-                                    <div class="label">Points</div>
-                                </div>
-                                <div class="stat-card badge-green">
-                                    <div class="icon">✅</div>
-                                    <div class="value">${state.gameState.questionsAnswered}</div>
-                                    <div class="label">Questions</div>
-                                </div>
+                <div class="container" style="padding-top: 2rem;">
+                    <div class="card text-center">
+                        <div class="character-big">🎉</div>
+                        <h1 class="mb-4">Amazing, ${appData.student.name}!</h1>
+                        
+                        <div class="grid grid-3 mb-6">
+                            <div class="stat-badge" style="display: block; padding: 2rem;">
+                                <div style="font-size: 3rem;">💯</div>
+                                <div style="font-size: 2.5rem; margin: 1rem 0;">${state.gameState.score}</div>
+                                <div style="font-size: 1rem;">Points</div>
                             </div>
-                            <div class="text-5xl font-bold mb-4" style="color: #eab308;">⭐ +${earnedStars} ⭐</div>
-                            <div class="text-2xl text-gray mb-6">+${earnedXP} XP earned!</div>
-                            <button onclick="startGame('${state.currentGame}')" class="btn btn-blue py-6 mb-4" style="width: 100%; font-size: 1.5rem;">
+                            <div class="stat-badge" style="display: block; padding: 2rem;">
+                                <div style="font-size: 3rem;">✅</div>
+                                <div style="font-size: 2.5rem; margin: 1rem 0;">${state.gameState.questionsAnswered}</div>
+                                <div style="font-size: 1rem;">Correct</div>
+                            </div>
+                            <div class="stat-badge" style="display: block; padding: 2rem;">
+                                <div style="font-size: 3rem;">⭐</div>
+                                <div style="font-size: 2.5rem; margin: 1rem 0;">+${earnedStars}</div>
+                                <div style="font-size: 1rem;">Stars!</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 justify-center">
+                            <button onclick="startGame('${state.currentGame}')" class="btn-round btn-success" style="font-size: 1.3rem;">
                                 🚀 Play Again
                             </button>
-                            <button onclick="state.screen='home'; render();" class="btn btn-gray py-6" style="width: 100%; font-size: 1.5rem;">
-                                Back to Home
+                            <button onclick="state.screen='home'; render();" class="btn-round btn-primary" style="font-size: 1.3rem;">
+                                🏠 Home
                             </button>
                         </div>
                     </div>
@@ -642,48 +900,90 @@
             `;
         }
 
-        function renderProgress() {
+        function requestAdminCode() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content text-center">
+                    <h2 class="mb-4">🔐 Parent Access</h2>
+                    <p style="color: #7A6A5A; font-size: 1.2rem; margin-bottom: 2rem;">Enter 4-digit code</p>
+                    <input type="password" id="codeInput" maxlength="4" 
+                           style="width: 100%; text-align: center; font-size: 2.5rem; margin-bottom: 2rem; letter-spacing: 1rem;" 
+                           placeholder="••••" autofocus />
+                    <div class="flex gap-4">
+                        <button onclick="verifyCode()" class="btn-round btn-success" style="flex: 1;">✅ Enter</button>
+                        <button onclick="closeModal()" class="btn-round btn-warning" style="flex: 1;">❌ Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function verifyCode() {
+            const input = document.getElementById('codeInput').value;
+            if (input === appData.adminCode) {
+                closeModal();
+                render();
+            } else {
+                alert('Wrong code! Try again 🔒');
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+            state.screen = 'home';
+            render();
+        }
+
+        function renderParentDashboard() {
+            const student = appData.student;
+            const skills = Object.entries(student.skills);
+            const skillNames = {
+                addition: 'Addition', subtraction: 'Subtraction', patterns: 'Patterns',
+                placeValue: 'Place Value', skipCount: 'Skip Counting', storySolver: 'Story Problems'
+            };
+
             return `
-                <div class="bg-purple">
-                    <div class="container">
-                        <div class="card">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-4xl font-bold text-gray">🏆 Your Progress</h2>
-                                <button onclick="state.screen='home'; render();" class="btn btn-gray px-6 py-3">Back</button>
-                            </div>
-                            <div class="grid grid-3 mb-8">
-                                <div class="stat-card badge-yellow">
-                                    <div class="icon">👑</div>
-                                    <div class="value">${state.playerData.level}</div>
-                                    <div class="label">Level</div>
-                                </div>
-                                <div class="stat-card badge-blue">
-                                    <div class="icon">⭐</div>
-                                    <div class="value">${state.playerData.stars}</div>
-                                    <div class="label">Stars</div>
-                                </div>
-                                <div class="stat-card badge-purple">
-                                    <div class="icon">📈</div>
-                                    <div class="value">${state.playerData.xp}</div>
-                                    <div class="label">Total XP</div>
-                                </div>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-4 text-gray">Skill Mastery</h3>
-                            ${Object.entries(state.playerData.skills).map(([skill, data]) => {
-                                const names = { addition: 'Addition', subtraction: 'Subtraction', patterns: 'Patterns', placeValue: 'Place Value' };
-                                return `
-                                    <div class="p-6 mb-4" style="background: #f9fafb; border-radius: 1rem;">
-                                        <div class="flex justify-between mb-3">
-                                            <span class="text-2xl font-bold text-gray">${names[skill]}</span>
-                                            <span class="font-bold" style="color: #a855f7; font-size: 1.125rem;">${data.mastery}%</span>
-                                        </div>
-                                        <div class="progress-bar" style="height: 1.5rem;">
-                                            <div class="progress-skill" style="width: ${data.mastery}%"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                <div class="container" style="padding-top: 2rem;">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1>📊 ${student.name}'s Progress</h1>
+                            <button onclick="state.screen='home'; render();" class="btn-round btn-warning">🏠 Home</button>
                         </div>
+                        
+                        <div class="grid grid-3 mb-6">
+                            <div class="stat-badge" style="display: block; padding: 2rem; text-align: center;">
+                                <div style="font-size: 2rem;">📝</div>
+                                <div style="font-size: 2rem; margin: 0.5rem 0;">${student.totalQuestionsAnswered}</div>
+                                <div>Questions</div>
+                            </div>
+                            <div class="stat-badge" style="display: block; padding: 2rem; text-align: center;">
+                                <div style="font-size: 2rem;">✅</div>
+                                <div style="font-size: 2rem; margin: 0.5rem 0;">${student.totalCorrect}</div>
+                                <div>Correct</div>
+                            </div>
+                            <div class="stat-badge" style="display: block; padding: 2rem; text-align: center;">
+                                <div style="font-size: 2rem;">🎯</div>
+                                <div style="font-size: 2rem; margin: 0.5rem 0;">
+                                    ${student.totalQuestionsAnswered > 0 ? Math.round((student.totalCorrect / student.totalQuestionsAnswered) * 100) : 0}%
+                                </div>
+                                <div>Accuracy</div>
+                            </div>
+                        </div>
+
+                        <h2 class="mb-4">Skill Progress</h2>
+                        ${skills.map(([skill, data]) => `
+                            <div style="margin-bottom: 2rem;">
+                                <div class="flex justify-between mb-2">
+                                    <span style="font-weight: 700; font-size: 1.2rem;">${skillNames[skill]}</span>
+                                    <span style="font-weight: 700; color: #67C7B3; font-size: 1.2rem;">${data.mastery}%</span>
+                                </div>
+                                <div class="progress-container" style="height: 25px;">
+                                    <div class="progress-fill" style="width: ${data.mastery}%; background: linear-gradient(90deg, #67C7B3 0%, #4FA899 100%);"></div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
@@ -691,15 +991,15 @@
 
         function render() {
             const screens = {
+                setup: renderSetup,
                 home: renderHome,
                 playing: renderPlaying,
                 results: renderResults,
-                progress: renderProgress
+                parentDashboard: renderParentDashboard
             };
             document.getElementById('app').innerHTML = screens[state.screen]();
         }
 
-        // Initial render
         render();
     </script>
 </body>
