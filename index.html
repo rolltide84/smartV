@@ -847,9 +847,6 @@
                                 <button onclick="state.screen='parentDashboard'; requestAdminCode();" class="btn-round btn-primary">
                                     📊 Parent
                                 </button>
-                                <button onclick="generateTestData()" class="btn-round" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); font-size: 1rem; padding: 0.8rem 1.5rem;">
-                                    🧪 Test Data
-                                </button>
                             </div>
                         </div>
                         
@@ -1033,53 +1030,6 @@
             const modal = document.querySelector('.modal');
             if (modal) modal.remove();
             state.screen = 'home';
-            render();
-        }
-
-        function generateTestData() {
-            if (!confirm('Generate sample data to preview the parent dashboard? 🧪')) return;
-            
-            // Generate test skill data
-            const skills = ['addition', 'subtraction', 'patterns', 'placeValue', 'skipCount', 'storySolver', 'moneyMaster', 'compareNumbers'];
-            skills.forEach((skill, index) => {
-                const total = Math.floor(Math.random() * 50) + 20;
-                const correct = Math.floor(total * (0.5 + Math.random() * 0.5));
-                appData.student.skills[skill] = {
-                    mastery: Math.floor((correct / total) * 100),
-                    correct: correct,
-                    total: total,
-                    timeSpent: Math.floor(Math.random() * 300000) + 60000
-                };
-            });
-            
-            // Generate test sessions
-            const gameTypes = skills;
-            for (let i = 0; i < 8; i++) {
-                const gameType = gameTypes[Math.floor(Math.random() * gameTypes.length)];
-                const correct = Math.floor(Math.random() * 10) + 5;
-                const total = correct + Math.floor(Math.random() * 5);
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                
-                appData.student.sessions.push({
-                    date: date.toISOString(),
-                    game: gameType,
-                    score: correct * 10,
-                    correct: correct,
-                    total: total,
-                    time: Math.floor(Math.random() * 600000) + 180000,
-                    mistakes: []
-                });
-            }
-            
-            // Update overall stats
-            appData.student.totalQuestionsAnswered = appData.student.sessions.reduce((sum, s) => sum + s.total, 0);
-            appData.student.totalCorrect = appData.student.sessions.reduce((sum, s) => sum + s.correct, 0);
-            appData.student.xp = appData.student.totalCorrect * 20;
-            appData.student.level = Math.floor(appData.student.xp / 100) + 1;
-            appData.student.stars = Math.floor(appData.student.totalCorrect * 1.5);
-            
-            alert('Test data generated! 🎉 Check the Parent Dashboard now!');
             render();
         }
 
