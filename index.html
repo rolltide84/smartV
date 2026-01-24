@@ -406,9 +406,29 @@
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             h1 { font-size: 2rem; }
-            .problem-text { font-size: 2.5rem; }
-            .answer-tile { font-size: 1.8rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.5rem; }
+            .problem-text { font-size: 3rem; }
+            .answer-tile { font-size: 2rem; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .character-big { font-size: 5rem; }
+            .stat-badge { font-size: 1.2rem; padding: 0.8rem 1.5rem; }
+            .btn-round { padding: 1rem 1.5rem; font-size: 1.1rem; }
+            .modal-content { width: 95%; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
+            .banner { font-size: 1.5rem; padding: 1rem 1.5rem; }
+            .banner::before, .banner::after { display: none; }
+            .activity-icon { width: 80px; height: 80px; font-size: 3rem; }
+            .activity-tile h3 { font-size: 1.3rem; }
+            .flex.gap-4 { flex-direction: column; gap: 0.5rem; }
+            .flex.gap-4 > * { width: 100%; }
+        }
+        
+        @media (max-width: 480px) {
+            .problem-text { font-size: 2rem; }
+            .answer-grid { grid-template-columns: repeat(2, 1fr); }
+            .answer-tile { font-size: 1.5rem; }
+            h1 { font-size: 1.5rem; }
+            .stat-badge { font-size: 1rem; padding: 0.6rem 1rem; }
         }
     </style>
 </head>
@@ -423,6 +443,52 @@
     <div id="app"></div>
 
     <script>
+        /*
+        ═══════════════════════════════════════════════════════════════
+        🎵 AUDIO SETUP INSTRUCTIONS - READ THIS FIRST!
+        ═══════════════════════════════════════════════════════════════
+        
+        To use your custom soundtracks from Freesound.org:
+        
+        STEP 1: Download the audio files
+        ────────────────────────────────
+        Visit each Freesound link and download the files:
+        • Menu Music: https://freesound.org/people/Mrthenoronha/sounds/371148/
+        • Game Music 1: https://freesound.org/people/Mrthenoronha/sounds/476546/
+        • Game Music 2: https://freesound.org/people/Mrthenoronha/sounds/519097/
+        • Game Music 3: https://freesound.org/people/Mrthenoronha/sounds/476548/
+        
+        STEP 2: Host the files on Netlify
+        ────────────────────────────────
+        1. Create a folder called "audio" in your project root
+        2. Upload the downloaded files to this folder
+        3. Rename them to:
+           - menu-music.mp3 (or .ogg, .wav - whatever format you downloaded)
+           - game-primary.mp3
+           - game-secondary.mp3
+           - game-tertiary.mp3
+        
+        STEP 3: Update the AUDIO_CONFIG below
+        ────────────────────────────────
+        Change the URLs in AUDIO_CONFIG to point to your hosted files:
+        • If files are in /audio/ folder, use: '/audio/filename.mp3'
+        • If hosted elsewhere, use full URL: 'https://yoursite.com/audio/filename.mp3'
+        
+        STEP 4: Deploy to Netlify
+        ────────────────────────────────
+        1. Push your changes to GitHub
+        2. Netlify will auto-deploy
+        3. Test the music!
+        
+        NOTE: The app includes fallback synthesized music if files aren't found.
+        
+        ⚠️  LICENSING: Make sure to credit the creator!
+           All sounds by Mrthenoronha on Freesound.org
+           Licensed under Creative Commons (check each sound's license)
+        
+        ═══════════════════════════════════════════════════════════════
+        */
+        
         // Initialize or load saved data from localStorage
         let appData = JSON.parse(localStorage.getItem('smartvData')) || {
             isSetup: false,
@@ -462,7 +528,7 @@
         };
 
         let state = {
-            screen: 'setup',
+            screen: appData.isSetup ? 'home' : 'setup',
             currentGame: null,
             showHint: false,
             soundEnabled: true,
@@ -482,10 +548,106 @@
             }
         };
 
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('smartvData', JSON.stringify(appData));
+        }
+
         // Sound System
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        let backgroundMusic = null;
-        let musicGainNode = null;
+        
+        // ⭐ AUDIO CONFIGURATION - MUSIC FILES FROM GOOGLE DRIVE ⭐
+        const AUDIO_CONFIG = {
+            // Menu/Dashboard music (plays on home, setup, settings, parent dashboard)
+            menuMusic: 'https://drive.google.com/uc?export=download&id=1_aCuhCdbixwj7fBm1zQleD7GWUvaEBLz',
+            
+            // Game music (randomly picks one when game starts)
+            gameMusic: [
+                'https://drive.google.com/uc?export=download&id=1VSiCa2HMdL6X8_eBu6TWdEQHfcEUG1yZ',
+                'https://drive.google.com/uc?export=download&id=1DAJEKGQ9q2OhUJi_mhnxFHGDtBsgWRzQ',
+                'https://drive.google.com/uc?export=download&id=1WRbAIpP5xxrTOnw-a1WQqm967FSCe3Wr'
+            ]
+        };
+        
+        let currentMusic = null;
+        let musicVolume = 0.3; // Default volume (0.0 to 1.0)
+
+        function playBackgroundMusic(type = 'menu') {
+            if (!state.musicEnabled || currentMusic) return;
+            
+            const musicUrl = type === 'menu' 
+                ? AUDIO_CONFIG.menuMusic 
+                : AUDIO_CONFIG.gameMusic[Math.floor(Math.random() * AUDIO_CONFIG.gameMusic.length)];
+            
+            currentMusic = new Audio(musicUrl);
+            currentMusic.loop = true;
+            currentMusic.volume = musicVolume;
+            
+            // Handle loading errors gracefully
+            currentMusic.onerror = () => {
+                console.warn('Music file not found - using fallback synthesized music');
+                currentMusic = null;
+                playFallbackMusic(type);
+            };
+            
+            currentMusic.play().catch(err => {
+                console.warn('Music playback failed:', err);
+                currentMusic = null;
+            });
+        }
+
+        function stopBackgroundMusic() {
+            if (currentMusic) {
+                currentMusic.pause();
+                currentMusic.currentTime = 0;
+                currentMusic = null;
+            }
+        }
+        
+        function setMusicVolume(volume) {
+            musicVolume = Math.max(0, Math.min(1, volume));
+            if (currentMusic) {
+                currentMusic.volume = musicVolume;
+            }
+        }
+        
+        // Fallback to synthesized music if audio files not found
+        function playFallbackMusic(type) {
+            // Original synthesized music code as fallback
+            const melody = type === 'menu' 
+                ? [{freq: 440, duration: 0.4}, {freq: 523.25, duration: 0.4}, {freq: 587.33, duration: 0.4}, {freq: 440, duration: 0.4}]
+                : [{freq: 523.25, duration: 0.3}, {freq: 587.33, duration: 0.3}, {freq: 659.25, duration: 0.3}, {freq: 523.25, duration: 0.3}];
+            
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.03;
+            gainNode.connect(audioContext.destination);
+            
+            let currentTime = audioContext.currentTime;
+            
+            function playMelody() {
+                if (!state.musicEnabled) return;
+                
+                melody.forEach((note) => {
+                    const osc = audioContext.createOscillator();
+                    osc.connect(gainNode);
+                    osc.frequency.value = note.freq;
+                    osc.type = 'sine';
+                    
+                    const startTime = currentTime;
+                    osc.start(startTime);
+                    osc.stop(startTime + note.duration);
+                    
+                    currentTime += note.duration;
+                });
+                
+                currentMusic = setTimeout(() => {
+                    currentTime = audioContext.currentTime;
+                    playMelody();
+                }, melody.reduce((sum, note) => sum + note.duration, 0) * 1000);
+            }
+            
+            playMelody();
+        }
 
         function playSound(type) {
             if (!state.soundEnabled) return;
@@ -561,62 +723,6 @@
             }
         }
 
-        function startBackgroundMusic() {
-            if (!state.musicEnabled || backgroundMusic) return;
-            
-            // Create a simple cheerful melody loop
-            const melody = [
-                {freq: 523.25, duration: 0.3}, // C
-                {freq: 587.33, duration: 0.3}, // D
-                {freq: 659.25, duration: 0.3}, // E
-                {freq: 523.25, duration: 0.3}, // C
-                {freq: 659.25, duration: 0.4}, // E
-                {freq: 523.25, duration: 0.4}, // C
-            ];
-            
-            musicGainNode = audioContext.createGain();
-            musicGainNode.gain.value = 0.03; // Quiet background music
-            musicGainNode.connect(audioContext.destination);
-            
-            let currentTime = audioContext.currentTime;
-            
-            function playMelody() {
-                if (!state.musicEnabled) return;
-                
-                melody.forEach((note, i) => {
-                    const osc = audioContext.createOscillator();
-                    osc.connect(musicGainNode);
-                    osc.frequency.value = note.freq;
-                    osc.type = 'sine';
-                    
-                    const startTime = currentTime;
-                    osc.start(startTime);
-                    osc.stop(startTime + note.duration);
-                    
-                    currentTime += note.duration;
-                });
-                
-                // Loop the melody
-                backgroundMusic = setTimeout(() => {
-                    currentTime = audioContext.currentTime;
-                    playMelody();
-                }, melody.reduce((sum, note) => sum + note.duration, 0) * 1000);
-            }
-            
-            playMelody();
-        }
-
-        function stopBackgroundMusic() {
-            if (backgroundMusic) {
-                clearTimeout(backgroundMusic);
-                backgroundMusic = null;
-            }
-            if (musicGainNode) {
-                musicGainNode.disconnect();
-                musicGainNode = null;
-            }
-        }
-
         function toggleSound() {
             state.soundEnabled = !state.soundEnabled;
             playSound('click');
@@ -625,10 +731,12 @@
 
         function toggleMusic() {
             state.musicEnabled = !state.musicEnabled;
-            if (state.musicEnabled && state.screen === 'playing') {
-                startBackgroundMusic();
-            } else {
+            if (!state.musicEnabled) {
                 stopBackgroundMusic();
+            } else {
+                // Restart music based on current screen
+                const musicType = state.screen === 'playing' ? 'game' : 'menu';
+                playBackgroundMusic(musicType);
             }
             render();
         }
@@ -669,6 +777,18 @@
                         <button onclick="completeSetup()" class="btn-round btn-success" style="width: 100%; font-size: 1.5rem; padding: 1.5rem;">
                             🚀 Start Adventure!
                         </button>
+                        
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(103, 199, 179, 0.1); border-radius: 15px; text-align: center;">
+                            <p style="color: #4FA899; font-size: 0.9rem; font-weight: 600;">
+                                💾 Your progress will be saved on this device!
+                            </p>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; padding: 0.8rem; background: rgba(167, 139, 250, 0.1); border-radius: 12px; text-align: center;">
+                            <p style="color: #8b5cf6; font-size: 0.75rem; font-weight: 500;">
+                                🎵 Music by Mrthenoronha (Freesound.org)
+                            </p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -713,6 +833,7 @@
                 moneyMaster: 'auto',
                 compareNumbers: 'auto'
             };
+            saveData();
             state.screen = 'home';
             render();
         }
@@ -891,8 +1012,9 @@
             };
             state.screen = 'playing';
             
-            // Start background music
-            setTimeout(() => startBackgroundMusic(), 100);
+            // Start game music
+            stopBackgroundMusic();
+            setTimeout(() => playBackgroundMusic('game'), 100);
             
             render();
         }
@@ -906,6 +1028,7 @@
             
             if (!state.showHint) {
                 appData.student.hintsAvailable--;
+                saveData();
                 playSound('hint');
             } else {
                 playSound('click');
@@ -948,6 +1071,7 @@
                     };
                     appData.student.sessions = [];
                     appData.student.achievements = [];
+                    saveData(); // Save reset state
                     state.screen = 'home';
                     render();
                     alert('Progress reset complete! Let\'s start fresh! 🌟');
@@ -984,6 +1108,8 @@
                 const accuracy = appData.student.skills[state.currentGame].correct / appData.student.skills[state.currentGame].total;
                 appData.student.skills[state.currentGame].mastery = Math.min(100, Math.floor(accuracy * 100));
 
+                saveData(); // Save progress after correct answer
+
                 // Only adjust difficulty if in auto mode
                 const pref = appData.student.difficultyPreferences[state.currentGame];
                 if (pref === 'auto') {
@@ -1014,6 +1140,7 @@
                 }
                 
                 appData.student.skills[state.currentGame].timeSpent += timeSpent;
+                saveData(); // Save progress after wrong answer
 
                 if (state.gameState.lives <= 0) {
                     endGame();
@@ -1051,7 +1178,12 @@
                 mistakes: state.gameState.mistakes
             });
             
+            saveData(); // Save session data
             state.screen = 'results';
+            
+            // Start menu music after game ends
+            setTimeout(() => playBackgroundMusic('menu'), 500);
+            
             render();
         }
 
@@ -1266,13 +1398,21 @@
                     <!-- Sound Controls -->
                     <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; border: 3px solid #fbbf24;">
                         <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #92400e;">🔊 Sound & Music</h3>
-                        <div class="flex gap-4">
+                        <div class="flex gap-4" style="margin-bottom: 1rem;">
                             <button onclick="toggleSound()" class="btn-round ${state.soundEnabled ? 'btn-success' : ''}" style="flex: 1; padding: 1rem;">
                                 ${state.soundEnabled ? '🔊' : '🔇'} Sound Effects
                             </button>
                             <button onclick="toggleMusic()" class="btn-round ${state.musicEnabled ? 'btn-primary' : ''}" style="flex: 1; padding: 1rem;">
                                 ${state.musicEnabled ? '🎵' : '🔕'} Music
                             </button>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 12px;">
+                            <label style="display: block; font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">
+                                🔉 Music Volume
+                            </label>
+                            <input type="range" min="0" max="100" value="${musicVolume * 100}" 
+                                   onchange="setMusicVolume(this.value / 100)"
+                                   style="width: 100%; accent-color: #f59e0b;" />
                         </div>
                     </div>
                     
@@ -1334,6 +1474,7 @@
         function setDifficulty(skill, level) {
             playSound('click');
             appData.student.difficultyPreferences[skill] = level;
+            saveData(); // Save difficulty preference
             
             // Update button styles
             ['auto', 'easy', 'medium', 'hard'].forEach(diff => {
@@ -1353,6 +1494,55 @@
             playSound('click');
             const modal = document.querySelector('.modal');
             if (modal) modal.remove();
+        }
+
+        // Export/Import Data Functions
+        function exportData() {
+            playSound('click');
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `smartv-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            playSound('complete');
+            alert('Progress exported! 💾 Save this file to backup your data!');
+        }
+
+        function importData() {
+            playSound('click');
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        if (importedData.student && importedData.adminCode) {
+                            appData = importedData;
+                            saveData();
+                            state.screen = 'home';
+                            render();
+                            playSound('complete');
+                            alert('Progress imported successfully! 🎉');
+                        } else {
+                            playSound('wrong');
+                            alert('Invalid backup file! ❌');
+                        }
+                    } catch (error) {
+                        playSound('wrong');
+                        alert('Error reading file! ❌');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         function requestAdminCode() {
@@ -1648,6 +1838,21 @@
                             </div>
                         </div>
 
+                        <div style="background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%); padding: 2rem; border-radius: 25px; text-align: center; border: 4px solid rgba(255, 255, 255, 0.5); margin-bottom: 2rem;">
+                            <h3 style="color: #CC5555; margin-bottom: 1rem; font-size: 1.5rem;">💾 Backup & Restore</h3>
+                            <p style="color: #AA4444; margin-bottom: 1.5rem; font-size: 1rem;">
+                                Save your progress to a file or restore from a backup
+                            </p>
+                            <div class="flex gap-4">
+                                <button onclick="exportData()" class="btn-round btn-primary" style="flex: 1; font-size: 1.1rem;">
+                                    📥 Export Backup
+                                </button>
+                                <button onclick="importData()" class="btn-round btn-success" style="flex: 1; font-size: 1.1rem;">
+                                    📤 Import Backup
+                                </button>
+                            </div>
+                        </div>
+
                         <div style="background: linear-gradient(135deg, #FFE5E5 0%, #FFD0D0 100%); padding: 2rem; border-radius: 25px; text-align: center; border: 4px solid rgba(255, 255, 255, 0.5);">
                             <h3 style="color: #CC5555; margin-bottom: 1rem; font-size: 1.5rem;">⚠️ Reset All Progress</h3>
                             <p style="color: #AA4444; margin-bottom: 1.5rem; font-size: 1.1rem;">
@@ -1671,7 +1876,19 @@
                 parentDashboard: renderParentDashboard
             };
             document.getElementById('app').innerHTML = screens[state.screen]();
+            
+            // Auto-start menu music on non-game screens
+            if (state.screen !== 'playing' && state.musicEnabled && !currentMusic) {
+                setTimeout(() => playBackgroundMusic('menu'), 100);
+            }
         }
+
+        // Start menu music on initial load
+        setTimeout(() => {
+            if (state.screen !== 'playing' && state.musicEnabled) {
+                playBackgroundMusic('menu');
+            }
+        }, 500);
 
         render();
     </script>
