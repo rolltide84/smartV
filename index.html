@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onboarding Process Assessment</title>
+    <title>228 Kendrick - Exclusive Invitation</title>
     <style>
         * {
             margin: 0;
@@ -12,78 +12,132 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            color: #f5f5f0;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+            background: linear-gradient(to bottom, #2a2a3e, #1f1f2e);
+            border: 2px solid #d4af37;
+            border-radius: 2px;
+            padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
             overflow: hidden;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        }
+
+        .logo {
             text-align: center;
+            margin-bottom: 40px;
         }
 
-        .header h1 {
-            font-size: 28px;
+        .logo h1 {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #d4af37;
+            text-transform: uppercase;
             margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
         }
 
-        .header p {
-            opacity: 0.9;
+        .logo .tagline {
             font-size: 14px;
+            letter-spacing: 3px;
+            color: #c4c4b8;
+            text-transform: uppercase;
+            font-weight: 300;
         }
 
-        .progress-bar {
-            height: 6px;
-            background: #e0e0e0;
+        .divider {
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 30px auto;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
+        .invitation-text {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .content {
-            padding: 40px;
+        .invitation-text h2 {
+            font-size: 28px;
+            color: #f5f5f0;
+            margin-bottom: 20px;
+            font-weight: 400;
         }
 
-        .section {
-            display: none;
+        .invitation-text p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #d4d4c8;
+            margin-bottom: 15px;
         }
 
-        .section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
+        .experience-details {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 2px solid #d4af37;
+            padding: 25px;
+            margin: 30px 0;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .experience-details h3 {
+            font-size: 20px;
+            color: #d4af37;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
         }
 
-        .section-title {
-            color: #333;
-            font-size: 24px;
+        .experience-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .experience-details li {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #e5e5dc;
             margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
         }
 
-        .section-description {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
+        .experience-details li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: #d4af37;
+            font-size: 10px;
+        }
+
+        .form-section {
+            margin-top: 40px;
+        }
+
+        .form-section h3 {
+            font-size: 24px;
+            color: #d4af37;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 2px;
         }
 
         .form-group {
@@ -92,644 +146,330 @@
 
         label {
             display: block;
-            color: #333;
-            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 1px;
+            color: #d4af37;
             margin-bottom: 8px;
-            font-size: 14px;
+            text-transform: uppercase;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="number"],
-        select,
-        textarea {
+        input, textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #f5f5f0;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
         textarea {
-            resize: vertical;
             min-height: 100px;
+            resize: vertical;
         }
 
-        .radio-group,
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .radio-option,
-        .checkbox-option {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .radio-option:hover,
-        .checkbox-option:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-        }
-
-        .radio-option input,
-        .checkbox-option input {
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        button {
-            padding: 12px 30px;
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #1a1a2e;
             border: none;
-            border-radius: 6px;
             font-size: 16px;
-            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-top: 30px;
+            border-radius: 2px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            flex: 1;
-        }
-
-        .btn-primary:hover {
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #e5c048, #d4af37);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .result {
-            display: none;
+        .footer {
             text-align: center;
-            padding: 40px 20px;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #8e8e7d;
+            letter-spacing: 2px;
         }
 
-        .result.active {
+        .page {
+            display: none;
+        }
+
+        .page.active {
             display: block;
+            animation: fadeIn 0.6s ease-in;
         }
 
-        .result-icon {
-            font-size: 64px;
+        .thank-you {
+            text-align: center;
+        }
+
+        .thank-you h2 {
+            font-size: 36px;
+            color: #d4af37;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        .thank-you p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #d4d4c8;
             margin-bottom: 20px;
         }
 
-        .result h2 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .result-summary {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
+        .confirmation-box {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 2px;
             text-align: left;
         }
 
-        .result-summary h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+        .reservation-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 2px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e5e5dc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
-        .result-summary ul {
-            list-style: none;
-            padding: 0;
+        .action-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #1a1a2e;
+            border: none;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-radius: 2px;
+            margin: 10px 5px;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .result-summary li {
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
+        .action-btn:hover {
+            background: linear-gradient(135deg, #e5c048, #d4af37);
+            box-shadow: 0 3px 15px rgba(212, 175, 55, 0.4);
         }
 
-        .result-summary li:last-child {
-            border-bottom: none;
+        .checkmark {
+            font-size: 60px;
+            color: #d4af37;
+            margin-bottom: 20px;
         }
 
-        .required {
-            color: #e74c3c;
+        .copy-success {
+            color: #d4af37;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            .logo h1 {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+
+            .invitation-text h2 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Client Onboarding Process Assessment</h1>
-            <p>Help us understand and improve your organization's client onboarding experience</p>
-        </div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <div class="logo">
+            <h1>228 KENDRICK</h1>
+            <div class="tagline">Exclusive Luxury Spa</div>
         </div>
 
-        <div class="content">
-            <form id="assessmentForm">
-                <!-- Section 1: Onboarding Process Evaluation -->
-                <div class="section active" data-section="1">
-                    <h2 class="section-title">Section 1: Current Client Onboarding Process</h2>
-                    <p class="section-description">Let's start by understanding your current client onboarding process and experience.</p>
+        <div class="divider"></div>
 
-                    <div class="form-group">
-                        <label>Company Name <span class="required">*</span></label>
-                        <input type="text" name="companyName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Your Role <span class="required">*</span></label>
-                        <input type="text" name="role" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Industry/Sector <span class="required">*</span></label>
-                        <input type="text" name="industry" required placeholder="e.g., SaaS, Consulting, Financial Services, Agency">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Average number of new clients onboarded per month <span class="required">*</span></label>
-                        <input type="number" name="newClients" required min="0">
-                    </div>
-
-                    <div class="form-group">
-                        <label>How long does your typical client onboarding process take? <span class="required">*</span></label>
-                        <select name="onboardingDuration" required>
-                            <option value="">Select duration</option>
-                            <option value="1-3">1-3 days</option>
-                            <option value="1-week">1 week</option>
-                            <option value="2-weeks">2 weeks</option>
-                            <option value="1-month">1 month</option>
-                            <option value="3-months">3 months</option>
-                            <option value="6-months">6+ months</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>What software/tools do you currently use to manage client onboarding? <span class="required">*</span></label>
-                        <textarea name="currentSoftware" required placeholder="List all platforms, CRMs, project management tools, spreadsheets, etc. used in your onboarding process (e.g., Salesforce, HubSpot, Monday.com, Google Sheets, DocuSign, Slack...)"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Overall satisfaction with current client onboarding process <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="satisfaction" value="very-satisfied" required>
-                                Very Satisfied
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="satisfaction" value="satisfied">
-                                Satisfied
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="satisfaction" value="neutral">
-                                Neutral
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="satisfaction" value="dissatisfied">
-                                Dissatisfied
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="satisfaction" value="very-dissatisfied">
-                                Very Dissatisfied
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>What are the biggest challenges in your client onboarding process?</label>
-                        <textarea name="challenges" placeholder="Describe any pain points, bottlenecks, or areas of concern..."></textarea>
-                    </div>
-
-                    <div class="button-group">
-                        <button type="button" class="btn-primary" onclick="nextSection()">Next: Manual Process Assessment →</button>
-                    </div>
-                </div>
-
-                <!-- Section 2: Manual Process & Automation Assessment -->
-                <div class="section" data-section="2">
-                    <h2 class="section-title">Section 2: Manual Processes & Automation Opportunities</h2>
-                    <p class="section-description">Identify manual tasks and processes that could potentially be automated to improve efficiency.</p>
-
-                    <div class="form-group">
-                        <label>Which manual tasks are currently part of your client onboarding process? <span class="required">*</span></label>
-                        <div class="checkbox-group" id="manualTasksGroup">
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="contracts">
-                                Contract generation and signing
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="data-entry">
-                                Manual data entry into CRM/systems
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="account-setup">
-                                Client account and portal setup
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="email-coordination">
-                                Email coordination and follow-ups
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="intake-forms">
-                                Client intake forms and questionnaires
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="kickoff-scheduling">
-                                Kickoff meeting scheduling
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="document-collection">
-                                Document collection and verification
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="invoicing">
-                                Invoice generation and payment setup
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="manualTasks" value="team-notifications">
-                                Internal team notifications and handoffs
-                            </label>
-                        </div>
-                        <span id="manualTasksError" style="color: #e74c3c; font-size: 12px; display: none; margin-top: 5px;">Please select at least one manual task</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Approximately how many hours per new client are spent on manual tasks? <span class="required">*</span></label>
-                        <input type="number" name="manualHours" required min="0" step="0.5">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Which processes would you most like to automate? <span class="required">*</span></label>
-                        <textarea name="automationPriorities" required placeholder="List the top 3-5 processes you'd like to automate and why..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Do your current systems integrate with each other?</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="systemIntegration" value="fully-integrated">
-                                Yes, fully integrated
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="systemIntegration" value="partially-integrated">
-                                Partially integrated
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="systemIntegration" value="not-integrated">
-                                No, mostly siloed systems
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Have you attempted automation in the past?</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="pastAutomation" value="yes-successful">
-                                Yes, successfully
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pastAutomation" value="yes-unsuccessful">
-                                Yes, but unsuccessful
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pastAutomation" value="no">
-                                No
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>What barriers prevent automation in your organization?</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="budget">
-                                Budget constraints
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="technical">
-                                Lack of technical expertise
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="resistance">
-                                Resistance to change
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="legacy">
-                                Legacy systems incompatibility
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="security">
-                                Security/compliance concerns
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="customization">
-                                Each client requires unique processes
-                            </label>
-                            <label class="checkbox-option">
-                                <input type="checkbox" name="barriers" value="none">
-                                No significant barriers
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Expected ROI timeframe for automation investment</label>
-                        <select name="roiTimeframe">
-                            <option value="">Select timeframe</option>
-                            <option value="3-months">3 months</option>
-                            <option value="6-months">6 months</option>
-                            <option value="1-year">1 year</option>
-                            <option value="2-years">2+ years</option>
-                            <option value="unsure">Unsure</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Additional comments or specific automation needs</label>
-                        <textarea name="additionalComments" placeholder="Share any other insights, requirements, or questions..."></textarea>
-                    </div>
-
-                    <div class="button-group">
-                        <button type="button" class="btn-secondary" onclick="previousSection()">← Back</button>
-                        <button type="button" class="btn-primary" onclick="submitForm()">Submit Assessment</button>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Results Section -->
-            <div class="result" id="resultSection">
-                <div class="result-icon">✅</div>
-                <h2>Assessment Complete!</h2>
-                <p>Thank you for completing the onboarding process assessment.</p>
-                
-                <div class="result-summary" id="summary"></div>
-
-                <button class="btn-primary" id="emailButton" style="margin-bottom: 15px;">Email Results to jeffersonjjones@icloud.com</button>
-                <button class="btn-secondary" onclick="resetForm()">Start New Assessment</button>
+        <div id="invitationPage" class="page active">
+            <div class="invitation-text">
+                <h2>You Are Cordially Invited</h2>
+                <p>to an unparalleled evening of restoration and tranquility</p>
             </div>
+
+            <div class="experience-details">
+                <h3>Your Curated Experience</h3>
+                <ul>
+                    <li>Commence with a warm aromatic bath infused with premium lavender oil and carefully selected essentials</li>
+                    <li>Conclude with a 30-minute full body massage featuring heated therapeutic oils and expert deep tissue therapy</li>
+                </ul>
+            </div>
+
+            <div class="form-section">
+                <h3>Reserve Your Experience</h3>
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="preferred">Special Products You Would Like Us to Use</label>
+                    <textarea id="preferred" placeholder="Please list any specific oils, lotions, or aromatherapy scents you prefer..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="allergies">Products to Avoid</label>
+                    <textarea id="allergies" placeholder="Please list any products you dislike or have had adverse reactions to..."></textarea>
+                </div>
+
+                <button class="submit-btn" onclick="submitForm()">Confirm Your Reservation</button>
+            </div>
+        </div>
+
+        <div id="thankYouPage" class="page">
+            <div class="thank-you">
+                <div class="checkmark">✓</div>
+                <h2>RESERVATION CONFIRMED</h2>
+                
+                <div class="confirmation-box">
+                    <p style="text-align: center; margin-bottom: 20px;">Your reservation details are ready to send:</p>
+                    
+                    <div class="reservation-details" id="reservationDetails"></div>
+                    
+                    <div style="text-align: center;">
+                        <button class="action-btn" onclick="copyText()">Copy to Clipboard</button>
+                        <a href="#" class="action-btn" id="emailLink">Send Email Now</a>
+                        <div class="copy-success" id="copySuccess">✓ Copied!</div>
+                    </div>
+                    
+                    <p style="text-align: center; margin-top: 25px; font-size: 14px; color: #c4c4b8;">
+                        Click "Send Email Now" to open your email client, or copy the details above and send manually to:<br>
+                        <strong style="color: #d4af37;">jeffersonjjones@yahoo.com</strong>
+                    </p>
+                </div>
+
+                <p style="margin-top: 30px; font-size: 16px;">We look forward to welcoming you to an extraordinary experience of luxury and rejuvenation.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            228 KENDRICK · WHERE LUXURY MEETS SERENITY
         </div>
     </div>
 
     <script>
-        let currentSection = 1;
-        const totalSections = 2;
-
-        function updateProgress() {
-            const progress = (currentSection / totalSections) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
+        let reservationText = '';
 
         function submitForm() {
-            console.log('submitForm called');
-            
-            // Validate manual tasks checkboxes
-            const manualTasksChecked = document.querySelectorAll('input[name="manualTasks"]:checked');
-            const manualTasksError = document.getElementById('manualTasksError');
-            
-            if (manualTasksChecked.length === 0) {
-                manualTasksError.style.display = 'block';
-                alert('Please select at least one manual task before submitting.');
-                return;
-            } else {
-                manualTasksError.style.display = 'none';
-            }
-            
-            // Validate required text fields
-            const manualHours = document.querySelector('input[name="manualHours"]');
-            const automationPriorities = document.querySelector('textarea[name="automationPriorities"]');
-            
-            if (!manualHours.value || manualHours.value <= 0) {
-                alert('Please enter the number of manual hours per client.');
-                manualHours.focus();
-                manualHours.style.borderColor = '#e74c3c';
-                return;
-            }
-            
-            if (!automationPriorities.value.trim()) {
-                alert('Please describe which processes you would like to automate.');
-                automationPriorities.focus();
-                automationPriorities.style.borderColor = '#e74c3c';
-                return;
-            }
-            
-            console.log('Validation passed');
-            
-            // Collect all form data
-            const form = document.getElementById('assessmentForm');
-            const formData = new FormData(form);
-            const data = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (data[key]) {
-                    if (!Array.isArray(data[key])) {
-                        data[key] = [data[key]];
-                    }
-                    data[key].push(value);
-                } else {
-                    data[key] = value;
-                }
-            }
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const preferred = document.getElementById('preferred').value.trim();
+            const allergies = document.getElementById('allergies').value.trim();
 
-            console.log('Form data collected:', data);
-            displayResults(data);
-        }
-
-        function nextSection() {
-            const currentSectionEl = document.querySelector(`.section[data-section="${currentSection}"]`);
-            const inputs = currentSectionEl.querySelectorAll('input[required], select[required], textarea[required]');
-            
-            let valid = true;
-            inputs.forEach(input => {
-                if (!input.value && input.type !== 'radio' && input.type !== 'checkbox') {
-                    valid = false;
-                    input.style.borderColor = '#e74c3c';
-                } else if (input.type === 'radio') {
-                    const radioGroup = currentSectionEl.querySelectorAll(`input[name="${input.name}"]`);
-                    const checked = Array.from(radioGroup).some(r => r.checked);
-                    if (!checked) valid = false;
-                }
-            });
-
-            if (!valid) {
-                alert('Please fill in all required fields before continuing.');
+            if (!name || !email || !phone) {
+                alert('Please fill in your name, email, and phone number.');
                 return;
             }
 
-            currentSectionEl.classList.remove('active');
-            currentSection++;
-            document.querySelector(`.section[data-section="${currentSection}"]`).classList.add('active');
-            updateProgress();
-            window.scrollTo(0, 0);
+            const subject = '228 Kendrick Spa Reservation - ' + name;
+            reservationText = '228 KENDRICK LUXURY SPA RESERVATION\n' +
+                '═══════════════════════════════════\n\n' +
+                'GUEST INFORMATION:\n' +
+                '─────────────────────\n' +
+                'Name: ' + name + '\n' +
+                'Email: ' + email + '\n' +
+                'Phone: ' + phone + '\n\n' +
+                'SPECIAL PRODUCT PREFERENCES:\n' +
+                '─────────────────────\n' +
+                (preferred || 'None specified') + '\n\n' +
+                'PRODUCTS TO AVOID:\n' +
+                '─────────────────────\n' +
+                (allergies || 'None specified') + '\n\n' +
+                '═══════════════════════════════════\n' +
+                'Received: ' + new Date().toLocaleString();
+
+            document.getElementById('reservationDetails').textContent = reservationText;
+
+            const mailtoLink = 'mailto:jeffersonjjones@yahoo.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(reservationText);
+            document.getElementById('emailLink').href = mailtoLink;
+
+            document.getElementById('invitationPage').classList.remove('active');
+            document.getElementById('thankYouPage').classList.add('active');
         }
 
-        function previousSection() {
-            document.querySelector(`.section[data-section="${currentSection}"]`).classList.remove('active');
-            currentSection--;
-            document.querySelector(`.section[data-section="${currentSection}"]`).classList.add('active');
-            updateProgress();
-            window.scrollTo(0, 0);
+        function copyText() {
+            const textarea = document.createElement('textarea');
+            textarea.value = reservationText;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const successMsg = document.getElementById('copySuccess');
+                successMsg.style.display = 'block';
+                setTimeout(function() {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            } catch (err) {
+                alert('Unable to copy automatically. Please select and copy the text manually.');
+            }
+            
+            document.body.removeChild(textarea);
         }
-
-        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitForm();
-        });
-
-        function displayResults(data) {
-            document.querySelector('.section.active').classList.remove('active');
-            document.getElementById('resultSection').classList.add('active');
-            
-            const manualTasks = Array.isArray(data.manualTasks) ? data.manualTasks : [data.manualTasks];
-            const barriers = Array.isArray(data.barriers) ? data.barriers : [data.barriers];
-            
-            let summaryHTML = `
-                <h3>Your Assessment Summary</h3>
-                <ul>
-                    <li><strong>Company:</strong> ${data.companyName}</li>
-                    <li><strong>Industry:</strong> ${data.industry}</li>
-                    <li><strong>Monthly New Clients:</strong> ${data.newClients}</li>
-                    <li><strong>Onboarding Duration:</strong> ${data.onboardingDuration}</li>
-                    <li><strong>Current Software:</strong> ${data.currentSoftware}</li>
-                    <li><strong>Current Satisfaction:</strong> ${data.satisfaction}</li>
-                    <li><strong>Manual Hours per Client:</strong> ${data.manualHours} hours</li>
-                    <li><strong>Manual Tasks Identified:</strong> ${manualTasks.length} processes</li>
-                    <li><strong>Key Barriers:</strong> ${barriers.filter(b => b).join(', ') || 'None specified'}</li>
-                </ul>
-                <p style="margin-top: 20px; color: #667eea; font-weight: 500;">
-                    Based on your responses, there appears to be significant opportunity for automation to improve efficiency and reduce the ${Math.round(data.manualHours * data.newClients)} hours spent monthly on manual client onboarding tasks.
-                </p>
-            `;
-            
-            document.getElementById('summary').innerHTML = summaryHTML;
-            
-            // Create email content
-            const emailSubject = `Client Onboarding Assessment - ${data.companyName}`;
-            const emailBody = `
-CLIENT ONBOARDING PROCESS ASSESSMENT
-====================================
-
-COMPANY INFORMATION
--------------------
-Company Name: ${data.companyName}
-Contact Role: ${data.role}
-Industry: ${data.industry}
-
-ONBOARDING METRICS
-------------------
-New Clients per Month: ${data.newClients}
-Onboarding Duration: ${data.onboardingDuration}
-Manual Hours per Client: ${data.manualHours} hours
-Total Monthly Manual Hours: ${Math.round(data.manualHours * data.newClients)} hours
-
-CURRENT SOFTWARE/TOOLS
-----------------------
-${data.currentSoftware}
-
-SATISFACTION & CHALLENGES
--------------------------
-Overall Satisfaction: ${data.satisfaction}
-${data.challenges ? 'Key Challenges:\n' + data.challenges : 'No challenges specified'}
-
-MANUAL TASKS IDENTIFIED
------------------------
-${manualTasks.filter(t => t).map(t => '• ' + t).join('\n')}
-
-AUTOMATION PRIORITIES
----------------------
-${data.automationPriorities}
-
-SYSTEM INTEGRATION
-------------------
-Integration Status: ${data.systemIntegration || 'Not specified'}
-
-AUTOMATION HISTORY
-------------------
-Past Automation Attempts: ${data.pastAutomation || 'Not specified'}
-
-BARRIERS TO AUTOMATION
-----------------------
-${barriers.filter(b => b).map(b => '• ' + b).join('\n') || 'None specified'}
-
-ROI EXPECTATIONS
-----------------
-Expected ROI Timeframe: ${data.roiTimeframe || 'Not specified'}
-
-ADDITIONAL COMMENTS
--------------------
-${data.additionalComments || 'None'}
-
-====================================
-Assessment completed on: ${new Date().toLocaleString()}
-            `;
-            
-            // Setup email button
-            document.getElementById('emailButton').onclick = function() {
-                const mailtoLink = `mailto:jefferson.jones@icloud.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-                window.location.href = mailtoLink;
-            };
-            
-            updateProgress();
-            window.scrollTo(0, 0);
-        }
-
-        function resetForm() {
-            document.getElementById('assessmentForm').reset();
-            document.getElementById('resultSection').classList.remove('active');
-            currentSection = 1;
-            document.querySelector('.section[data-section="1"]').classList.add('active');
-            updateProgress();
-            window.scrollTo(0, 0);
-        }
-
-        // Initialize progress bar
-        updateProgress();
-
-        // Reset border color on input
-        document.querySelectorAll('input, select, textarea').forEach(input => {
-            input.addEventListener('input', function() {
-                this.style.borderColor = '#e0e0e0';
-            });
-        });
-        
-        // Hide manual tasks error when a checkbox is selected
-        document.querySelectorAll('input[name="manualTasks"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const manualTasksError = document.getElementById('manualTasksError');
-                if (manualTasksError) {
-                    manualTasksError.style.display = 'none';
-                }
-            });
-        });
     </script>
 </body>
 </html>
